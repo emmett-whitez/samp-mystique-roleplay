@@ -1,6 +1,6 @@
 {
-	"user": "dejan-jovanov1c",
-	"repo": "samp-generation-z",
+	"user": "emmett-whitez",
+	"repo": "samp-generationz",
 	"entry": "gamemodes/main.pwn",
 	"output": "gamemodes/main.amx",
 	"dependencies": [
@@ -93,7 +93,9 @@
 				"gamemodes/core/systems/orgs",
 				"gamemodes/core/systems/gps",
 				"gamemodes/core/systems/wanted",
-				"gamemodes/core/systems/mobile"
+				"gamemodes/core/systems/mobile",
+				"gamemodes/core/systems/port",
+				"gamemodes/core/systems/safezones"
 			],
 			"compiler": {}
 		}
