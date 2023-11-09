@@ -8,7 +8,7 @@
 #include <maps/map_spawn>
 #include <maps/map_hospital>
 #include <maps/map_bank>
-#include <maps/map_winteredition>
+// #include <maps/map_winteredition>
 #include <maps/map_lspd>
 #include <maps/map_postmanjob>
 #include <maps/map_mowerjob>
@@ -33,7 +33,7 @@ hook OnGameModeInit()
 
     Hospital_CreateObjects();
     Spawn_CreateObjects();
-    WE_CreateObjects();
+    // WE_CreateObjects();
     Bank_CreateObjects();
     LSPD_CreateObjects();
     PostOffice_CreateObjects();
@@ -56,6 +56,7 @@ hook OnGameModeExit()
 
 hook OnPlayerConnect(playerid)
 {
+    CityHall_RemoveObjects(playerid);
     Hospital_RemoveObjects(playerid);
     LSPD_RemoveObjects(playerid);
     Mower_RemoveObjects(playerid);
@@ -111,7 +112,7 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
         }
 
         // City Hall
-        else if (IsPlayerInRangeOfPoint(playerid, 2.0, 1481.0414, -1771.2716, 18.7958))
+        else if (IsPlayerInRangeOfPoint(playerid, 2.0, 1480.6881,-1773.5413,14.9407))
         {
             UI_ShowLoadingTextDraw(playerid, "UCITAVANJE OBJEKATA...", 2000);
             Streamer_UpdateEx(playerid, 1041.7997, -689.5055, -2.3966, .compensatedtime = 2000);
@@ -120,7 +121,7 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
         else if (IsPlayerInRangeOfPoint(playerid, 2.0, 1041.7997, -689.5055, -2.3966))
         {
             UI_ShowLoadingTextDraw(playerid, "UCITAVANJE OBJEKATA...", 2000);
-            Streamer_UpdateEx(playerid, 1481.0414, -1771.2716, 18.7958, .compensatedtime = 2000);
+            Streamer_UpdateEx(playerid, 1480.6881,-1773.5413,14.9407, .compensatedtime = 2000);
         }
 
         // Car dealership

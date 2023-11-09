@@ -3,6 +3,14 @@
 #endif
 #define _INC_player_functions_inc
 
+static BitArray:Bit_Seatbelt<MAX_PLAYERS>;
+stock Player_GetSeatbelt(const playerid) return Bit_Get(Bit_Seatbelt, playerid);
+stock Player_SetSeatbelt(const playerid, bool:value)
+{
+	Bit_Set(Bit_Seatbelt, playerid, value);
+	return 1;
+}
+
 stock Player_ClearChat(const playerid, const adminid = INVALID_PLAYER_ID, const lines)
 {
 	new hour, minute, second, day, month, year;

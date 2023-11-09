@@ -3,14 +3,14 @@
 #endif
 #define _INC_settings_inc
 
-#define MAIN_COLOR          "{0f802c}"
-#define MAIN_COLOR_HEX      0x0f802cFF
+#define MAIN_COLOR          "{e84615}"
+#define MAIN_COLOR_HEX      0xe84615FF
 #define ADMIN_CHAT_COLOR    0xb5b04aFF
 #define PURPLE_COLOR_HEX    0xC2A2DAAA
 
 const
     MIN_PASSWORD_LENGTH =       6,
-    MAX_PASSWORD_LENGTH =       24,
+    MAX_PASSWORD_LENGTH =       16,
     MAX_LOGIN_ATTEMPTS =        3,
     MAX_ADMIN_LEVEL =           3,
     MAX_COMMANDS_PER_LEVEL =    15,
@@ -31,7 +31,7 @@ native STREAMER_TAG_3D_TEXT_LABEL:fmt_CreateDyn3DTextLabel(ConstString: text, co
 stock SendServerMsg(const playerid, const string: message[])
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "GENERATIONZ: "WHITE"%s", message);
+    format(str, sizeof str, "[gta-world]: "WHITE"%s", message);
 
     return SendClientMessage(playerid, MAIN_COLOR_HEX, str);
 }
@@ -39,7 +39,7 @@ stock SendServerMsg(const playerid, const string: message[])
 stock SendServerMsgF(const playerid, const string: message[], va_args<>)
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "GENERATIONZ: "WHITE"%s", message);
+    format(str, sizeof str, "[gta-world]: "WHITE"%s", message);
 
     return va_SendClientMessage(playerid, MAIN_COLOR_HEX, va_return(str, va_start<2>));
 }
@@ -57,7 +57,7 @@ stock SendCustomMsgToAllF(const color, const string: message[], va_args<>)
 stock SendServerMsgToAllF(const string: message[], va_args<>)
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "GENERATIONZ: "WHITE"%s", message);
+    format(str, sizeof str, "[gta-world]: "WHITE"%s", message);
 
     return va_SendClientMessageToAll(MAIN_COLOR_HEX, va_return(str, va_start<1>));
 }
@@ -65,15 +65,15 @@ stock SendServerMsgToAllF(const string: message[], va_args<>)
 stock SendErrorMsg(const playerid, const string: message[])
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "("RED"Greska"WHITE"!): %s", message);
+    format(str, sizeof str, "[GRESKA]: "WHITE"%s", message);
 
-    return SendClientMessage(playerid, -1, str);
+    return SendClientMessage(playerid, X11_RED, str);
 }
 
 stock SendErrorMsgF(const playerid, const string: message[], va_args<>)
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "("RED"Greska"WHITE"!): %s", message);
+    format(str, sizeof str, "[GRESKA]: "WHITE"%s", message);
 
     return va_SendClientMessage(playerid, X11_RED, va_return(str, va_start<2>));
 }
@@ -81,7 +81,7 @@ stock SendErrorMsgF(const playerid, const string: message[], va_args<>)
 stock SendSyntaxMsg(const playerid, const string: message[])
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "KORISTI: "WHITE"%s", message);
+    format(str, sizeof str, "[KORISTI]: "WHITE"%s", message);
 
     return SendClientMessage(playerid, X11_YELLOW, str);
 }
@@ -89,7 +89,7 @@ stock SendSyntaxMsg(const playerid, const string: message[])
 stock SendInfoMsg(const playerid, const string: message[])
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "INFO: "LIGHTGRAY"%s", message);
+    format(str, sizeof str, "[INFO]: "LIGHTGRAY"%s", message);
 
     return SendClientMessage(playerid, X11_ORANGE, str);
 }
@@ -97,7 +97,7 @@ stock SendInfoMsg(const playerid, const string: message[])
 stock SendInfoMsgF(const playerid, const string: message[], va_args<>)
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "INFO: "LIGHTGRAY"%s", message);
+    format(str, sizeof str, "[INFO]: "LIGHTGRAY"%s", message);
 
     return va_SendClientMessage(playerid, X11_ORANGE, va_return(str, va_start<2>));
 }
@@ -105,7 +105,7 @@ stock SendInfoMsgF(const playerid, const string: message[], va_args<>)
 stock SendInfoMsgToAll(const string: message[])
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "INFO: "LIGHTGRAY"%s", message);
+    format(str, sizeof str, "[INFO]: "LIGHTGRAY"%s", message);
 
     return SendClientMessageToAll(X11_ORANGE, str);
 }
@@ -113,7 +113,7 @@ stock SendInfoMsgToAll(const string: message[])
 stock SendInfoMsgToAllF(const string: message[], va_args<>)
 {
     new str[YSI_MAX_STRING];
-    format(str, sizeof str, "INFO: "LIGHTGRAY"%s", message);
+    format(str, sizeof str, "[INFO]: "LIGHTGRAY"%s", message);
 
     return va_SendClientMessageToAll(X11_ORANGE, va_return(str, va_start<1>));
 }

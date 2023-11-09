@@ -341,6 +341,8 @@ stock WeedGrower_SetCheckpoint(const playerid, const checkpoint)
             SendInfoMsg(playerid, "Sada otidjite gde ste uzeli torbu i ostavite je komandom /ostavitorbu.");
             DisablePlayerCheckpoint(playerid);
             WeedGrower_SetJobDone(playerid);
+
+            weedGrowerZCoordinate[playerid] = 0.00;
         }
 
         case 15:
@@ -351,8 +353,9 @@ stock WeedGrower_SetCheckpoint(const playerid, const checkpoint)
 
             SendCustomMsgF(playerid, X11_CYAN, "POSAO: "WHITE"Zavrsili ste sa poslom.");
             SendCustomMsgF(playerid, X11_CYAN, "POSAO: "WHITE"Dobili ste %d marihuane.", marijuana);
-            WeedGrower_SetPlayerMarijuana(playerid, marijuana);
+            WeedGrower_SetPlayerMarijuana(playerid, (WeedGrower_GetPlayerMarijuana(playerid) + marijuana));
 
+            Account_SetJobStarted(playerid, Account_GetJob(playerid), false);
             Account_SetMoney(playerid, Account_GetMoney(playerid) + money);
             GivePlayerMoney(playerid, money);
 

@@ -3,42 +3,39 @@
 #endif
 #define _INC_player_commands_inc
 
-forward Float: House_GetPos(const houseid, const index);
-
 static
-	BitArray:Bit_Seatbelt<MAX_PLAYERS>,
+	BitArray:Bit_PDDuty<MAX_PLAYERS>,
 	houseLocated[MAX_PLAYERS],
 	askqTimer[MAX_PLAYERS],
-	reportTimer[MAX_PLAYERS],
-	BitArray:Bit_PDDuty<MAX_PLAYERS>;
+	reportTimer[MAX_PLAYERS];
 
-stock Player_GetSeatbelt(const playerid) return Bit_Get(Bit_Seatbelt, playerid);
-stock Player_SetSeatbelt(const playerid, bool:value)
-{
-	Bit_Set(Bit_Seatbelt, playerid, value);
-	return 1;
-}
-
-Command(name: rank, rank: Rank_Player(), args: playerid, const string: params[])
-{
-	SendInfoMsgF(playerid, "Vas trenutni rank: %s", Rank_GetNameByID(Rank_GetID(playerid)));
-	return 1;
-}
-
-Command(name: help, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: help, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:help(const playerid, const params[], help)
 {
 	Dialog_Show(playerid, "DIALOG_PLAYERHELP", DIALOG_STYLE_MSGBOX,
-		""MAIN_COLOR"GENERATIONZ - "WHITE"Komande",
+		""MAIN_COLOR"gta-world - "WHITE"Komande",
 		""MAIN_COLOR"______________________________________________________\n\n\
 		"MAIN_COLOR"Komande: "WHITE"/stats /askq /report /id /we /vreme /pojas\n\
 		"MAIN_COLOR"Komande: "WHITE"/kupikucu /banka /otvoriracun /unrent\n\
 		"MAIN_COLOR"Komande: "WHITE"/poslovi /hours /anim /vreme /otkaz\n\
 		"MAIN_COLOR"Komande: "WHITE"/posao /posaooprema /b /gps /rank /smokeweed\n\
-		"MAIN_COLOR"Komande: "WHITE"/kupimobilni /kupimp3\n\
+		"MAIN_COLOR"Komande: "WHITE"/kupimobilni /kupimp3 /spawnchange /admins\n\
 		"MAIN_COLOR"Telefon: "WHITE"/p /h /telefon\n\
 		"MAIN_COLOR"Organizacija: "WHITE"/f /rank /members /orgrank\n\
 		"MAIN_COLOR"______________________________________________________",
 		""MAIN_COLOR"Zatvori"
+	);
+	return 1;
+}
+
+// Command(name: spawnchange, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:spawnchange(const playerid, const params[], help)
+{
+	Dialog_Show(playerid, "DIALOG_SPAWNCHANGE", DIALOG_STYLE_LIST,
+		""MAIN_COLOR"gta-world - "WHITE"Promena spawna",
+		""MAIN_COLOR"[1]. "WHITE"Normalan spawn\n\
+		"MAIN_COLOR"[2]. "WHITE"Spawn u kuci",
+		""MAIN_COLOR"Odaberi", "Izlaz"
 	);
 	return 1;
 }
@@ -57,7 +54,7 @@ Command(name: help, rank: Rank_Player(), args: playerid, const string: params[])
         strcopy(tmpStr[3], ""DARKRED"Ukljuci sve");
 
     Dialog_Show(playerid, "DIALOG_WINTER", DIALOG_STYLE_TABLIST_HEADERS,
-        ""MAIN_COLOR"GENERATIONZ - "WHITE"Winter Edition",
+        ""MAIN_COLOR"gta-world - "WHITE"Winter Edition",
         ""MAIN_COLOR"Opcija\t"MAIN_COLOR"Status\n\
         "WHITE"Sneg po mapi\t%s\n\
         "WHITE"Padanje snega\t%s\n\
@@ -70,14 +67,16 @@ Command(name: help, rank: Rank_Player(), args: playerid, const string: params[])
     return 1;
 }*/
 
-Command(name: pojas, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: pojas, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:pojas(const playerid, const params[], help)
 {
 	if (IsPlayerInAnyVehicle(playerid))
 		Vehicle_SetSeatbelt(playerid);
 	return 1;
 }
 
-Command(name: otvoriracun, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: otvoriracun, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:otvoriracun(const playerid, const params[], help)
 {
 	if (!IsPlayerInRangeOfPoint(playerid, 2.0, 1376.3872, -29.5206, 1000.8729))
 		return SendErrorMsg(playerid, "Morate biti u banci!");
@@ -85,13 +84,16 @@ Command(name: otvoriracun, rank: Rank_Player(), args: playerid, const string: pa
 	if (Account_GetBankCard(playerid))
 		return SendErrorMsg(playerid, "Vec imate otvoren bankovni racun!");
 
+	new code = 100000 + random(899000);
+	Atm_SetPlayerPinCode(playerid, code);
 	Account_SetBankCard(playerid, 1);
 	UI_UpdateInfoTD(playerid);
 	SendServerMsg(playerid, "Uspesno ste otvorili bankovni racun!");
 	return 1;
 }
 
-Command(name: banka, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: banka, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:banka(const playerid, const params[], help)
 {
 	if (!IsPlayerInRangeOfPoint(playerid, 2.0, 1375.9037, -26.0387, 1000.8729))
 		return SendErrorMsg(playerid, "Morate biti u banci!");
@@ -100,7 +102,7 @@ Command(name: banka, rank: Rank_Player(), args: playerid, const string: params[]
 		return SendErrorMsg(playerid, "Morate otvoriti bankovni racun!");
 
 	Dialog_Show(playerid, "DIALOG_BANK", DIALOG_STYLE_TABLIST_HEADERS,
-		""MAIN_COLOR"GENERATIONZ - "WHITE"Banka",
+		""MAIN_COLOR"gta-world - "WHITE"Banka",
 		""MAIN_COLOR"Opcija\t"MAIN_COLOR"Stanje\n\
 		"WHITE"Podigni novac\t"DARKGREEN"$"WHITE"%d "GREY"u banci\n\
 		"WHITE"Ostavi novac\t"DARKGREEN"$"WHITE"%d "GREY"kod sebe\n\
@@ -110,7 +112,8 @@ Command(name: banka, rank: Rank_Player(), args: playerid, const string: params[]
 	return 1;
 }
 
-Command(name: posao, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: posao, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:posao(const playerid, const params[], help)
 {
 	if (Account_GetJob(playerid))
 		return SendErrorMsg(playerid, "Vec imate posao! Za otkaz, idite u opstinu.");
@@ -149,7 +152,8 @@ Command(name: posao, rank: Rank_Player(), args: playerid, const string: params[]
 	return 1;
 }
 
-Command(name: posaooprema, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: posaooprema, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:posaooprema(const playerid, const params[], help)
 {
 	// Postman
 	if (IsPlayerInRangeOfPoint(playerid, 2.0, 979.5859, -1254.7031, 16.9465) && Account_GetJob(playerid) == 1)
@@ -166,7 +170,8 @@ Command(name: posaooprema, rank: Rank_Player(), args: playerid, const string: pa
 	return 1;
 }
 
-Command(name: otkaz, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: otkaz, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:otkaz(const playerid, const params[], help)
 {
 	if (!IsPlayerInRangeOfPoint(playerid, 2.0, 1025.9491, -681.8823, -3.9059))
 		return SendErrorMsg(playerid, "Morate biti u opstini!");
@@ -182,7 +187,8 @@ Command(name: otkaz, rank: Rank_Player(), args: playerid, const string: params[]
 	return 1;
 }
 
-Command(name: pokreniposao, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: pokreniposao, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:pokreniposao(const playerid, const params[], help)
 {
 	if (!Account_GetJobUniform(playerid))
 		return SendErrorMsg(playerid, "Niste uzeli opremu za posao.");
@@ -217,7 +223,7 @@ Command(name: pokreniposao, rank: Rank_Player(), args: playerid, const string: p
 
 			// SendInfoMsg(playerid, "Zapoceli ste posao.");
 			Dialog_Show(playerid, "DIALOG_BUSROUTE", DIALOG_STYLE_LIST,
-				""MAIN_COLOR"GENERATIONZ - "WHITE"Bus linija",
+				""MAIN_COLOR"gta-world - "WHITE"Bus linija",
 				""MAIN_COLOR"1. "WHITE"Prva ruta\n"MAIN_COLOR"2. "WHITE"Druga ruta (NIJE DOSTUPNO)",
 				""MAIN_COLOR"Odaberi", "Izlaz"
 			);
@@ -242,7 +248,8 @@ Command(name: pokreniposao, rank: Rank_Player(), args: playerid, const string: p
 	return 1;
 }
 
-Command(name: ostavitorbu, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: ostavitorbu, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:ostavitorbu(const playerid, const params[], help)
 {
 	if (Account_GetJob(playerid) != 4)
 		return SendErrorMsg(playerid, "Nemate posao uzgajivac marihuane!");
@@ -258,7 +265,8 @@ Command(name: ostavitorbu, rank: Rank_Player(), args: playerid, const string: pa
 	return 1;
 }
 
-Command(name: uzmitorbu, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: uzmitorbu, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:uzmitorbu(const playerid, const params[], help)
 {
 	if (Account_GetJob(playerid) != 4)
 		return SendErrorMsg(playerid, "Nemate posao uzgajivac marihuane!");
@@ -274,7 +282,8 @@ Command(name: uzmitorbu, rank: Rank_Player(), args: playerid, const string: para
 	return 1;
 }
 
-Command(name: uzmiseme, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: uzmiseme, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:uzmiseme(const playerid, const params[], help)
 {
 	if (Account_GetJob(playerid) != 4)
 		return SendErrorMsg(playerid, "Nemate posao uzgajivac marihuane!");
@@ -290,7 +299,8 @@ Command(name: uzmiseme, rank: Rank_Player(), args: playerid, const string: param
 	return 1;
 }
 
-Command(name: prekiniposao, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: prekiniposao, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:prekiniposao(const playerid, const params[], help)
 {
 	if (!Account_GetJob(playerid))
 		return SendErrorMsg(playerid, "Nemate posao!");
@@ -306,13 +316,15 @@ Command(name: prekiniposao, rank: Rank_Player(), args: playerid, const string: p
 	return 1;
 }
 
-Command(name: hours, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: hours, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:hours(const playerid, const params[], help)
 {
 	SendInfoMsgF(playerid, "Sati igre na serveru: %d.", Account_GetHours(playerid));
 	return 1;
 }
 
-Command(name: unrent, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: unrent, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:unrent(const playerid, const params[], help)
 {
 	if (!Rent_GetPlayerTime(playerid))
 		return SendErrorMsg(playerid, "Nemate iznajmljeno vozilo!");
@@ -322,7 +334,8 @@ Command(name: unrent, rank: Rank_Player(), args: playerid, const string: params[
 	return 1;
 }
 
-Command(name: kupikucu, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: kupikucu, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:kupikucu(const playerid, const params[], help)
 {
 	if (Account_GetHouse(playerid) != -1)
         return SendCustomMsgF(playerid, X11_RED, "(Kuca!): "WHITE"Vec imate kucu!");
@@ -366,14 +379,15 @@ Command(name: kupikucu, rank: Rank_Player(), args: playerid, const string: param
 //     strcopy(tmpString, (!House_IsLocked(houseid) ? (""DARKRED"Zakljucaj") : (""LIGHTGREEN"Otkljucaj")));
 
 //     Dialog_Show(playerid, "DIALOG_HOUSEMENU", DIALOG_STYLE_LIST,
-//         ""MAIN_COLOR"GENERATIONZ - "WHITE"Kuca",
+//         ""MAIN_COLOR"gta-world - "WHITE"Kuca",
 //         "Komande za kucu\nPromeni opis kuce\n%s kucu\nProdaj kucu",
 //         ""MAIN_COLOR"Potvrdi", "Izlaz", tmpString
 //     );
 // 	return 1;
 // }
 
-Command(name: locirajkucu, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: locirajkucu, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:locirajkucu(const playerid, const params[], help)
 {
 	new houseid = Account_GetHouse(playerid);
 	if (houseid == -1)
@@ -393,20 +407,22 @@ Command(name: locirajkucu, rank: Rank_Player(), args: playerid, const string: pa
 	return 1;
 }
 
-Command(name: poslovi, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: poslovi, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:poslovi(const playerid, const params[], help)
 {
 	if (!IsPlayerInRangeOfPoint(playerid, 1.00, 1024.2988, -681.9590, -3.9059))
 		return SendErrorMsg(playerid, "Morate biti u opstini!");
 
 	Dialog_Show(playerid, "DIALOG_JOBLIST", DIALOG_STYLE_INPUT,
-		""MAIN_COLOR"GENERATIONZ - "WHITE"Lista poslova",
+		""MAIN_COLOR"gta-world - "WHITE"Lista poslova",
 		""MAIN_COLOR"1 - "WHITE"Postar\n"MAIN_COLOR"2 - "WHITE"Kosac trave\n"MAIN_COLOR"3 - "WHITE"Bus vozac\n"MAIN_COLOR"4 - "WHITE"Uzgajivac marihuane\n\n"WHITE"Unesite broj posla, na mapi ce\n\
 		Vam biti oznacen zeljeni posao.", ""MAIN_COLOR"Unesi", "Izlaz"
 	);
 	return 1;
 }
 
-Command(name: anim, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: anim, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:anim(const playerid, const params[], help)
 {
 	if (isnull(params) || IsNumeric(params))
 		return SendSyntaxMsg(playerid, "/anim [list|name|stop]");
@@ -437,24 +453,26 @@ Command(name: anim, rank: Rank_Player(), args: playerid, const string: params[])
 	return 1;
 }
 
-Command(name: vreme, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: vreme, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:vreme(const playerid, const params[], help)
 {
 	static tmpString[64], currentHour, currentMin, currentSec;
 	gettime(currentHour, currentMin, currentSec);
 
 	Anim_Play(playerid, "COP_AMBIENT", "Coplook_watch", 3.5, 0, 0, 0, 0, 0);
 	
-	if (Account_GetJailTime(playerid))
-		va_GameTextForPlayer(playerid, "~y~- %02d:%02d:%02d -~n~~r~Zatvoren: ~w~%d minuta", 3000, 3, currentHour, currentMin, currentSec, Account_GetJailTime(playerid));	
-	else
-		va_GameTextForPlayer(playerid, "~y~- %02d:%02d:%02d -", 3000, 3, currentHour, currentMin, currentSec);
+	// if (Account_GetJailTime(playerid))
+	// 	va_GameTextForPlayer(playerid, "~y~- %02d:%02d:%02d -~n~~r~Zatvoren: ~w~%d minuta", 3000, 3, currentHour, currentMin, currentSec, Account_GetJailTime(playerid));	
+	// else
+	va_GameTextForPlayer(playerid, "~y~- %02d:%02d:%02d -", 3000, 3, currentHour, currentMin, currentSec);
 
 	format(tmpString, sizeof(tmpString), "%s podize ruku i gleda na sat.", ReturnPlayerName(playerid));
 	Rank_RadiusMessage(20.0, playerid, tmpString, PURPLE_COLOR_HEX, PURPLE_COLOR_HEX, PURPLE_COLOR_HEX, PURPLE_COLOR_HEX, PURPLE_COLOR_HEX);
 	return 1;
 }
 
-Command(name: id, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: id, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:id(const playerid, const params[], help)
 {
 	static targetName;
 	if (sscanf(params, "u", targetName))
@@ -469,12 +487,13 @@ Command(name: id, rank: Rank_Player(), args: playerid, const string: params[])
 	return 1;
 }
 
-Command(name: askq, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: askq, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:askq(const playerid, const params[], help)
 {
 	static tmpString[32], staffCount;
 	foreach (new i: Player)
 	{
-		if (Rank_GetID(i) == Rank_Moderator() || Rank_GetID(i) == Rank_Administrator())
+		if (Rank_GetPlayerAdminLevel(i))
 		{
 			strcopy(tmpString, ""LIGHTGREEN"Ima staff-a");
 			staffCount++;
@@ -491,7 +510,7 @@ Command(name: askq, rank: Rank_Player(), args: playerid, const string: params[])
 		return SendCustomMsgF(playerid, X11_RED, "ASKQ: "WHITE"Pitanje mozete postaviti svaka 2 minuta!");
 
 	Dialog_Show(playerid, "DIALOG_ASKQSELECT", DIALOG_STYLE_TABLIST_HEADERS,
-		""MAIN_COLOR"GENERATIONZ - "WHITE"PITANJE",
+		""MAIN_COLOR"gta-world - "WHITE"PITANJE",
 		""WHITE"Opcija\t"WHITE"Status\n\
 		"WHITE"Staff team-u\t%s",
 		""MAIN_COLOR"Odaberi", "Izlaz", tmpString
@@ -499,12 +518,13 @@ Command(name: askq, rank: Rank_Player(), args: playerid, const string: params[])
 	return 1;
 }
 
-Command(name: report, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: report, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:report(const playerid, const params[], help)
 {
 	static tmpString[32], staffCount;
 	foreach (new i: Player)
 	{
-		if (Rank_GetID(i) == Rank_Moderator() || Rank_GetID(i) == Rank_Administrator())
+		if (Rank_GetPlayerAdminLevel(i))
 		{
 			strcopy(tmpString, ""LIGHTGREEN"Ima staff-a");
 			staffCount++;
@@ -521,7 +541,7 @@ Command(name: report, rank: Rank_Player(), args: playerid, const string: params[
 		return SendCustomMsgF(playerid, X11_RED, "ASKQ: "WHITE"Prijavu mozete poslati svaka 2 minuta!");
 
 	Dialog_Show(playerid, "DIALOG_REPORTSELECT", DIALOG_STYLE_TABLIST_HEADERS,
-		""MAIN_COLOR"GENERATIONZ - "WHITE"PRIJAVA",
+		""MAIN_COLOR"gta-world - "WHITE"PRIJAVA",
 		""WHITE"Opcija\t"WHITE"Status\n\
 		"WHITE"Staff team-u\t%s",
 		""MAIN_COLOR"Odaberi", "Izlaz", tmpString
@@ -529,7 +549,8 @@ Command(name: report, rank: Rank_Player(), args: playerid, const string: params[
 	return 1;
 }
 
-Command(name: kioskui, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: kioskui, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:kioskui(const playerid, const params[], help)
 {
 	if (!Kiosk_ChoosingItem(playerid))
 		return 0;
@@ -538,7 +559,8 @@ Command(name: kioskui, rank: Rank_Player(), args: playerid, const string: params
 	return 1;
 }
 
-Command(name: cardealershipui, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: cardealershipui, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:cardealershipui(const playerid, const params[], help)
 {
 	if (!Vehicle_ViewingCatalogue(playerid))
 		return 0;
@@ -547,7 +569,8 @@ Command(name: cardealershipui, rank: Rank_Player(), args: playerid, const string
 	return 1;
 }
 
-Command(name: f, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: f, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:f(const playerid, const params[], help)
 {
 	if (!Org_GetID(playerid))
 		return SendErrorMsg(playerid, "Niste u organizaciji!");
@@ -574,7 +597,8 @@ Command(name: f, rank: Rank_Player(), args: playerid, const string: params[])
 	return 1;
 }
 
-Command(name: pdduznost, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: pdduznost, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:pdduznost(const playerid, const params[], help)
 {
 	if (Org_GetID(playerid) != 1)
 		return SendErrorMsg(playerid, "Niste clan policije!");
@@ -602,7 +626,8 @@ Command(name: pdduznost, rank: Rank_Player(), args: playerid, const string: para
 	return 1;
 }
 
-Command(name: pdoprema, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: pdoprema, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:pdoprema(const playerid, const params[], help)
 {
 	if (Org_GetID(playerid) != 1)
 		return SendErrorMsg(playerid, "Niste clan policije!");
@@ -624,13 +649,21 @@ Command(name: pdoprema, rank: Rank_Player(), args: playerid, const string: param
 	return 1;
 }
 
-Command(name: gps, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: gps, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:gps(const playerid, const params[], help)
 {
 	GPS_ShowMenu(playerid);
 	return 1;
 }
 
-Command(name: b, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:gpsoff(const playerid, const params[], help)
+{
+	GPS_Disable(playerid);
+	return 1;
+}
+
+// Command(name: b, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:b(const playerid, const params[], help)
 {
 	if (isnull(params))
 		return SendSyntaxMsg(playerid, "/b [ooc text]");
@@ -641,7 +674,8 @@ Command(name: b, rank: Rank_Player(), args: playerid, const string: params[])
 	return 1;
 }
 
-Command(name: orgrank, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: orgrank, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:orgrank(const playerid, const params[], help)
 {
 	if (Org_GetRank(playerid) != 5)
 		return SendErrorMsg(playerid, "Samo lideri organizacije!");
@@ -681,15 +715,15 @@ Command(name: orgrank, rank: Rank_Player(), args: playerid, const string: params
 	return 1;
 }
 
-Command(name: stats, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: stats, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:stats(const playerid, const params[], help)
 {
 	Dialog_Show(playerid, "DIALOG_STATS", DIALOG_STYLE_MSGBOX,
-		""MAIN_COLOR"GENERATIONZ - "WHITE"Statistika",
+		""MAIN_COLOR"gta-world - "WHITE"Statistika",
 		""MAIN_COLOR"_____________________________\n\
 		"MAIN_COLOR"Ime i prezime: "WHITE"%s %s\n\
 		"MAIN_COLOR"Spol: "WHITE"%s\n\
 		"MAIN_COLOR"ID: "WHITE"%d\n\n\
-		"MAIN_COLOR"Rank: "WHITE"%s\n\
 		"MAIN_COLOR"Skin: "WHITE"%d\n\
 		"MAIN_COLOR"Sati igre: "WHITE"%d\n\
 		"MAIN_COLOR"Level: "WHITE"%d\n\
@@ -704,8 +738,7 @@ Command(name: stats, rank: Rank_Player(), args: playerid, const string: params[]
 		"MAIN_COLOR"_____________________________",
 		"Izlaz", "",
 		Player_SplitName(playerid, "name"), Player_SplitName(playerid, "lastname"),
-		((Account_GetGender(playerid) == 1) ? "Musko" : "Zensko"),
-		playerid, Rank_GetNameByID(Rank_GetID(playerid)),
+		((Account_GetGender(playerid) == 1) ? "Musko" : "Zensko"), playerid,
 		Account_GetSkin(playerid), Account_GetHours(playerid),
 		Account_GetScore(playerid), Account_GetExp(playerid), (Account_GetScore(playerid) * 2),
 		Account_GetMoney(playerid), Account_GetBankMoney(playerid), Account_GetGold(playerid),
@@ -716,7 +749,8 @@ Command(name: stats, rank: Rank_Player(), args: playerid, const string: params[]
 	return 1;
 }
 
-Command(name: smokeweed, rank: Rank_Player(), args: playerid, const string: params)
+// Command(name: smokeweed, rank: Rank_Player(), args: playerid, const string: params)
+YCMD:smokeweed(const playerid, const params[], help)
 {
 	if (WeedGrower_GetPlayerMarijuana(playerid) < 10)
 		return SendErrorMsg(playerid, "Nemate marihuane kod sebe (min. 10g)!");
@@ -725,7 +759,8 @@ Command(name: smokeweed, rank: Rank_Player(), args: playerid, const string: para
 	return 1;
 }
 
-Command(name: kupimobilni, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: kupimobilni, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:kupimobilni(const playerid, const params[], help)
 {
 	if (!IsPlayerInRangeOfPoint(playerid, 2.0, 1310.2061,-1189.7286,23.7329))
 		return SendErrorMsg(playerid, "Morate biti u elkoru, (/gps)!");
@@ -750,7 +785,8 @@ Command(name: kupimobilni, rank: Rank_Player(), args: playerid, const string: pa
 	return 1;
 }
 
-Command(name: telefon, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: telefon, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:telefon(const playerid, const params[], help)
 {
 	if (!Mobile_Get(playerid))
 		return SendErrorMsg(playerid, "Nemate mobilni telefon, kupite ga u elkoru (/gps)!");
@@ -773,11 +809,93 @@ Command(name: telefon, rank: Rank_Player(), args: playerid, const string: params
 	return 1;
 }
 
-Command(name: mobileui, rank: Rank_Player(), args: playerid, const string: params[])
+// Command(name: mobileui, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:mobileui(const playerid, const params[], help)
 {
 	if (Mobile_GetUI(playerid))
 		Mobile_CreateUI(playerid);
 	return 1;
+}
+
+// Command(name: selectui, rank: Rank_Player(), args: playerid, const string: params[])
+YCMD:selectui(const playerid, const params[], help)
+{
+	if (Selection_GetUI(playerid))
+		Selection_CreateUI(playerid);
+	return 1;
+}
+
+// Command(name: p, rank: Rank_Player(), args: playerid, const stirng: params[])
+YCMD:p(const playerid, const params[], help)
+{
+	if (!Mobile_Ringing(playerid))
+		return SendErrorMsg(playerid, "Ne zvoni vam mobilni telefon!");
+
+	if (Mobile_Answered(playerid))
+		return SendErrorMsg(playerid, "Vec ste se javili na telefon!");
+
+	SendCustomMsgF(playerid, X11_YELLOW, "Mobilni: "WHITE"Javili ste se na mobilni telefon!");
+	SendCustomMsgF(Mobile_WhoCalled(playerid), X11_YELLOW, "Mobilni: "WHITE"Korisnik %s se javio na telefon.", ReturnPlayerName(playerid));
+	Mobile_CallOngoing(Mobile_WhoCalled(playerid), 1);
+	Mobile_CallOngoing(playerid, 1);
+	Mobile_SetAnswer(playerid, 1);
+	Mobile_SetRing(playerid, 0);
+
+	SetPlayerSpecialAction(playerid, SPECIAL_ACTION_USECELLPHONE);
+	SetPlayerAttachedObject(playerid, Mobile_GetPhoneSlot(), 330, 6, 0.04, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+	SetPlayerSpecialAction(Mobile_WhoCalled(playerid), SPECIAL_ACTION_USECELLPHONE);
+	SetPlayerAttachedObject(Mobile_WhoCalled(playerid), Mobile_GetPhoneSlot(), 330, 6, 0.04, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+	return 1;
+}
+
+// Command(name: h, rank: Rank_Player(), args: playerid, const stirng: params[])
+YCMD:h(const playerid, const params[], help)
+{
+	if (Mobile_Ringing(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid))))
+	{
+		Mobile_SetRing(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid)), 0);
+		// if (_:playerid != Mobile_WhoCalled(playerid))
+		// 	SendCustomMsgF(Mobile_WhoCalled(playerid), X11_RED, "Mobilni: "WHITE"%s je "RED"prekinuo "WHITE"poziv!", ReturnPlayerName(playerid));
+		// else
+		// 	SendCustomMsgF(playerid, X11_RED, "Mobilni: prekinuli "WHITE"ste poziv!");
+		return 1;
+	}
+
+	if (Mobile_IsCallOngoing(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid))))
+	{
+		Mobile_SetAnswer(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid)), 0);
+		Mobile_SetRing(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid)), 0);
+		Mobile_SetAnswer(Mobile_WhoCalled(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid))), 0);
+		Mobile_SetRing(Mobile_WhoCalled(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid))), 0);
+		Mobile_CallOngoing(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid)), 0);
+		Mobile_CallOngoing(Mobile_WhoCalled(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid))), 0);
+
+		SetPlayerSpecialAction(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid)), SPECIAL_ACTION_STOPUSECELLPHONE);
+		RemovePlayerAttachedObject(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid)), Mobile_GetPhoneSlot());
+		SetPlayerSpecialAction(Mobile_WhoCalled(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid))), SPECIAL_ACTION_STOPUSECELLPHONE);
+		RemovePlayerAttachedObject(Mobile_WhoCalled(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid))), Mobile_GetPhoneSlot());
+	}
+	return 1;
+}
+
+YCMD:admins(const playerid, const params[], help)
+{
+	foreach (new i: Player)
+	{
+		if (!Rank_GetPlayerAdminLevel(i))
+			SendErrorMsg(playerid, "Trenutno nema admina na serveru.");
+		else
+		{
+			Dialog_Show(playerid, "DIALOG_ADMINLIST", DIALOG_STYLE_TABLIST,
+				""YELLOW"Lista Online Admina",
+				""WHITE"Ime\t"YELLOW"Rank\n\
+				%s\t"YELLOW"%s",
+				""YELLOW"Zatvori", "",
+				ReturnPlayerName(i), Rank_GetAdminName(Rank_GetPlayerAdminLevel(i))
+			);
+		}
+	}
+	return COMMAND_OK;
 }
 
 Dialog: DIALOG_PHONEMENU(const playerid, response, listitem, string: inputtext[])
@@ -787,13 +905,13 @@ Dialog: DIALOG_PHONEMENU(const playerid, response, listitem, string: inputtext[]
 
 	switch (listitem)
 	{
-		case 0..1: Command_Call(name: telefon, args: playerid, "");
+		case 0..1: Command_ReProcess(playerid, "telefon", false);
 		case 2: Dialog_Show(playerid, "DIALOG_CALLSELECT", DIALOG_STYLE_INPUT,
 					""MAIN_COLOR"Mobilni telefon - "WHITE"Pozivanje",
 					""WHITE"Unesite ID/Ime igraca ciji broj zelite da pozovete:",
 					""MAIN_COLOR"Unesi", "Izlaz"
 				);
-		case 3..4: Command_Call(name: telefon, args: playerid, "");
+		case 3..4: Command_ReProcess(playerid, "telefon", false);
 	}
 	return 1;
 }
@@ -801,13 +919,13 @@ Dialog: DIALOG_PHONEMENU(const playerid, response, listitem, string: inputtext[]
 Dialog: DIALOG_CALLSELECT(const playerid, response, listitem, string: inputtext[])
 {
 	if (!response)
-		Command_Call(name: telefon, args: playerid, "");
+		Command_ReProcess(playerid, "telefon", false);
 
 	// We'll use sscanf because we can serach player by id or name
 	// with isnull(...) and IsNumeric(...), we can't do that
 	static targetid;
 	if (sscanf(inputtext, "r", targetid))
-		return Command_Call(name: telefon, args: playerid, "");
+		return Command_ReProcess(playerid, "telefon", false);
 
 	Mobile_SelectPlayer(playerid, targetid);
 	Mobile_CreateUI(playerid);
@@ -883,7 +1001,7 @@ Dialog: DIALOG_ASKQSELECT(const playerid, response, listitem, string: inputtext[
 	
 	if (!listitem)
 		Dialog_Show(playerid, "DIALOG_ASKQSTAFF", DIALOG_STYLE_INPUT,
-			""MAIN_COLOR"GENERATIONZ - "WHITE"PITANJE",
+			""MAIN_COLOR"gta-world - "WHITE"PITANJE",
 			""WHITE"Unesite pitanje koje zelite da postavite staff team-u:",
 			""MAIN_COLOR"Unesi", "Izlaz"
 		);
@@ -897,7 +1015,7 @@ Dialog: DIALOG_REPORTSELECT(const playerid, response, listitem, string: inputtex
 	
 	if (!listitem)
 		Dialog_Show(playerid, "DIALOG_REPORTSTAFF", DIALOG_STYLE_INPUT,
-			""MAIN_COLOR"GENERATIONZ - "WHITE"PRIJAVA",
+			""MAIN_COLOR"gta-world - "WHITE"PRIJAVA",
 			""WHITE"Unesite prijavu koju zelite da posaljete staff team-u:",
 			""MAIN_COLOR"Unesi", "Izlaz"
 		);
@@ -907,22 +1025,22 @@ Dialog: DIALOG_REPORTSELECT(const playerid, response, listitem, string: inputtex
 Dialog: DIALOG_ASKQSTAFF(const playerid, response, listitem, const string: inputtext[])
 {
 	if (!response)
-		return Command_Call(name: askq, args: playerid, "");
+		return Command_ReProcess(playerid, "askq", false);
 
 	if (isnull(inputtext))
 	{
 		SendCustomMsgF(playerid, X11_RED, "ASKQ: "WHITE"Morate napisati nesto, (inv/askq)!");
-		return Command_Call(name: askq, args: playerid, "");
+		return Command_ReProcess(playerid, "askq", false);
 	}
 
 	if (strlen(inputtext) > 128)
 	{
 		SendCustomMsgF(playerid, X11_RED, "ASKQ: "WHITE"Predugacak tekst, (inv/askq)!");
-		return Command_Call(name: askq, args: playerid, "");	
+		return Command_ReProcess(playerid, "askq", false);
 	}
 
 	SendCustomMsgF(playerid, X11_YELLOW, "ASKQ: "WHITE"Poslali ste pitanje staff team-u!");
-	Rank_StaffMessage(X11_YELLOW, "#Q: "WHITE"%s(%d) pita: "YELLOW"%s", ReturnPlayerName(playerid), playerid, inputtext);
+	Rank_AdminMessage(X11_YELLOW, "#Q: "WHITE"%s(%d) pita: "YELLOW"%s", ReturnPlayerName(playerid), playerid, inputtext);
 	askqTimer[playerid] = (gettime() + (60 * ASKQ_TIMER_MIN));
 	return 1;
 }
@@ -930,22 +1048,22 @@ Dialog: DIALOG_ASKQSTAFF(const playerid, response, listitem, const string: input
 Dialog: DIALOG_REPORTSTAFF(const playerid, response, listitem, const string: inputtext[])
 {
 	if (!response)
-		return Command_Call(name: report, args: playerid, "");
+		return Command_ReProcess(playerid, "report", false);
 
 	if (isnull(inputtext))
 	{
 		SendCustomMsgF(playerid, X11_RED, "REPORT: "WHITE"Morate napisati nesto, (inv/report)!");
-		return Command_Call(name: report, args: playerid, "");
+		return Command_ReProcess(playerid, "report", false);
 	}
 
 	if (strlen(inputtext) > 128)
 	{
 		SendCustomMsgF(playerid, X11_RED, "REPORT: "WHITE"Predugacak tekst, (inv/report)!");
-		return Command_Call(name: report, args: playerid, "");	
+		return Command_ReProcess(playerid, "report", false);	
 	}
 
 	SendCustomMsgF(playerid, X11_RED, "REPORT: "WHITE"Poslali ste prijavu staff team-u!");
-	Rank_StaffMessage(X11_RED, "#REPORT: "WHITE"%s(%d) prijavljuje: "RED"%s", ReturnPlayerName(playerid), playerid, inputtext);
+	Rank_AdminMessage(X11_RED, "#REPORT: "WHITE"%s(%d) prijavljuje: "RED"%s", ReturnPlayerName(playerid), playerid, inputtext);
 	reportTimer[playerid] = (gettime() + (60 * ASKQ_TIMER_MIN));
 	return 1;
 }
@@ -1010,12 +1128,12 @@ Dialog: DIALOG_BANK(const playerid, response, listitem, string: inputtext[])
 			if (!Account_GetBankMoney(playerid))
 			{
 				SendErrorMsg(playerid, "Nemate novca u banci!");
-				Command_Call(name: banka, args: playerid, "");
+				Command_ReProcess(playerid, "banka", false);
 				return 1;
 			}
 
 			Dialog_Show(playerid, "DIALOG_BANKTAKEMONEY", DIALOG_STYLE_INPUT,
-				""MAIN_COLOR"GENERATIONZ - "WHITE"Podigni novac",
+				""MAIN_COLOR"gta-world - "WHITE"Podigni novac",
 				""MAIN_COLOR"Banka: "WHITE"Unesite koliko novca podizete:",
 				""MAIN_COLOR"Potvrdi", "Izlaz"
 			);
@@ -1026,12 +1144,12 @@ Dialog: DIALOG_BANK(const playerid, response, listitem, string: inputtext[])
 			if (!Account_GetMoney(playerid))
 			{
 				SendErrorMsg(playerid, "Nemate novca kod sebe!");
-				Command_Call(name: banka, args: playerid, "");
+				Command_ReProcess(playerid, "banka", false);
 				return 1;
 			}
 
 			Dialog_Show(playerid, "DIALOG_BANKLEAVEMONEY", DIALOG_STYLE_INPUT,
-				""MAIN_COLOR"GENERATIONZ - "WHITE"Ostavi novac",
+				""MAIN_COLOR"gta-world - "WHITE"Ostavi novac",
 				""MAIN_COLOR"Banka: "WHITE"Unesite koliko novca ostavljate:",
 				""MAIN_COLOR"Potvrdi", "Izlaz"
 			);
@@ -1042,12 +1160,12 @@ Dialog: DIALOG_BANK(const playerid, response, listitem, string: inputtext[])
 			if (!Account_GetBankMoney(playerid) && !Account_GetMoney(playerid))
 			{
 				SendErrorMsg(playerid, "Nemate novca ni u banci ni kod sebe!");
-				Command_Call(name: banka, args: playerid, "");
+				Command_ReProcess(playerid, "banka", false);
 				return 1;
 			}
 
 			Dialog_Show(playerid, "DIALOG_BANKTRANSFERMONEY", DIALOG_STYLE_LIST,
-				""MAIN_COLOR"GENERATIONZ - "WHITE"Prebaci novac",
+				""MAIN_COLOR"gta-world - "WHITE"Prebaci novac",
 				""WHITE"Prebaci sa bankovnog racuna\n"WHITE"Prebaci sa novcem kod sebe",
 				""MAIN_COLOR"Potvrdi", "Izlaz"
 			);
@@ -1059,12 +1177,12 @@ Dialog: DIALOG_BANK(const playerid, response, listitem, string: inputtext[])
 Dialog: DIALOG_BANKTAKEMONEY(const playerid, response, listitem, string: inputtext[])
 {
 	if (!response)
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 
 	if (Account_GetBankMoney(playerid) < strval(inputtext))
 	{
 		SendErrorMsg(playerid, "Nemate toliko novca u banci!");
-		Command_Call(name: banka, args: playerid, "");
+		Command_ReProcess(playerid, "banka", false);
 		return 1;
 	}
 
@@ -1073,6 +1191,10 @@ Dialog: DIALOG_BANKTAKEMONEY(const playerid, response, listitem, string: inputte
 	Account_SetMoney(playerid, Account_GetMoney(playerid) + strval(inputtext));
 	GivePlayerMoney(playerid, strval(inputtext));
 
+	if (Atm_PanelOpened(playerid))
+		Atm_DestroyUI(playerid);
+
+	CancelSelectTextDraw(playerid);
 	UI_UpdateInfoTD(playerid);
 	return 1;
 }
@@ -1080,12 +1202,12 @@ Dialog: DIALOG_BANKTAKEMONEY(const playerid, response, listitem, string: inputte
 Dialog: DIALOG_BANKLEAVEMONEY(const playerid, response, listitem, string: inputtext[])
 {
 	if (!response)
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 
 	if (Account_GetMoney(playerid) < strval(inputtext))
 	{
 		SendErrorMsg(playerid, "Nemate toliko novca kod sebe!");
-		Command_Call(name: banka, args: playerid, "");
+		Command_ReProcess(playerid, "banka", false);
 		return 1;
 	}
 
@@ -1094,6 +1216,10 @@ Dialog: DIALOG_BANKLEAVEMONEY(const playerid, response, listitem, string: inputt
 	Account_SetMoney(playerid, Account_GetMoney(playerid) - strval(inputtext));
 	GivePlayerMoney(playerid, -strval(inputtext));
 
+	if (Atm_PanelOpened(playerid))
+		Atm_DestroyUI(playerid);
+
+	CancelSelectTextDraw(playerid);
 	UI_UpdateInfoTD(playerid);
 	return 1;
 }
@@ -1101,14 +1227,14 @@ Dialog: DIALOG_BANKLEAVEMONEY(const playerid, response, listitem, string: inputt
 Dialog: DIALOG_BANKTRANSFERMONEY(const playerid, response, listitem, string: inputtext[])
 {
 	if (!response)
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 
 	switch (listitem)
 	{
 		case 0:
 		{
 			Dialog_Show(playerid, "DIALOG_TFBANKMONEY", DIALOG_STYLE_INPUT,
-				""MAIN_COLOR"GENERATIONZ - "WHITE"Prebaci novac",
+				""MAIN_COLOR"gta-world - "WHITE"Prebaci novac",
 				""WHITE"Unesite kolicinu novca i id/ime igraca kojem saljete novac:",
 				""MAIN_COLOR"Potvrdi", "Izlaz"
 			);
@@ -1117,7 +1243,7 @@ Dialog: DIALOG_BANKTRANSFERMONEY(const playerid, response, listitem, string: inp
 		case 1:
 		{
 			Dialog_Show(playerid, "DIALOG_TFPOCKETMONEY", DIALOG_STYLE_INPUT,
-				""MAIN_COLOR"GENERATIONZ - "WHITE"Prebaci novac",
+				""MAIN_COLOR"gta-world - "WHITE"Prebaci novac",
 				""WHITE"Unesite kolicinu novca i id/ime igraca kojem saljete novac:",
 				""MAIN_COLOR"Potvrdi", "Izlaz"
 			);
@@ -1129,31 +1255,31 @@ Dialog: DIALOG_BANKTRANSFERMONEY(const playerid, response, listitem, string: inp
 Dialog: DIALOG_TFBANKMONEY(const playerid, response, listitem, string: inputtext[])
 {
 	if (!response)
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 
 	static targetid, money;
 	if (sscanf(inputtext, "ir", money, targetid))
 	{
 		SendErrorMsg(playerid, "Unesite kolicinu novca i ID/Ime igraca kojem saljete!");
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 	}
 
 	if (!IsPlayerConnected(targetid))
 	{
 		SendErrorMsg(playerid, "Taj korisnik nije prijavljen!");
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 	}
 
 	if (Account_GetBankMoney(playerid) < money)
 	{
 		SendErrorMsg(playerid, "Nemate toliko novca na bankovnom racunu!");
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 	}
 
 	if (!Account_GetBankCard(targetid))
 	{
 		SendErrorMsg(playerid, "Taj korisnik nema otvoren bankovni racun!");
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 	}
 
 	SendServerMsgF(playerid, "Poslali ste "DARKGREEN"$"WHITE"%d igracu "MAIN_COLOR"%s"WHITE".", money, ReturnPlayerName(targetid));
@@ -1169,31 +1295,31 @@ Dialog: DIALOG_TFBANKMONEY(const playerid, response, listitem, string: inputtext
 Dialog: DIALOG_TFPOCKETMONEY(const playerid, response, listitem, string: inputtext[])
 {
 	if (!response)
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 
 	static targetid, money;
 	if (sscanf(inputtext, "ir", money, targetid))
 	{
 		SendErrorMsg(playerid, "Unesite kolicinu novca i ID/Ime igraca kojem saljete!");
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 	}
 
 	if (!IsPlayerConnected(targetid))
 	{
 		SendErrorMsg(playerid, "Taj korisnik nije prijavljen!");
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 	}
 
 	if (Account_GetMoney(playerid) < money)
 	{
 		SendErrorMsg(playerid, "Nemate toliko novca kod sebe!");
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 	}
 
 	if (!Account_GetBankCard(targetid))
 	{
 		SendErrorMsg(playerid, "Taj korisnik nema otvoren bankovni racun!");
-		return Command_Call(name: banka, args: playerid, "");
+		return Command_ReProcess(playerid, "banka", false);
 	}
 
 	SendServerMsgF(playerid, "Poslali ste "DARKGREEN"$"WHITE"%d igracu "MAIN_COLOR"%s"WHITE".", money, ReturnPlayerName(targetid));
@@ -1214,7 +1340,7 @@ Dialog: DIALOG_JOBLIST(const playerid, response, listitem, string: inputtext[])
 		return 1;
 
 	if (isnull(inputtext) && !IsNumeric(inputtext))
-		return Command_Call(name: poslovi, args: playerid, "");
+		return Command_ReProcess(playerid, "poslovi", false);
 
 	switch (strval(inputtext))
 	{
@@ -1235,8 +1361,27 @@ Dialog: DIALOG_JOBLIST(const playerid, response, listitem, string: inputtext[])
 			SetPlayerCheckpoint(playerid, 1808.0718,-1904.3878,13.5755, 3.00);
 			GameTextForPlayer(playerid, "~w~POSAO JE ~g~OZNACEN ~w~NA MAPI!", 3000, 3);
 		}
+
+		case 4:
+		{
+			SetPlayerCheckpoint(playerid, 2491.6658,-957.3235,82.3045, 3.00);
+			GameTextForPlayer(playerid, "~w~POSAO JE ~g~OZNACEN ~w~NA MAPI!", 3000, 3);
+		}
 		
-		default: Command_Call(name: poslovi, args: playerid, "");
+		default: Command_ReProcess(playerid, "poslovi", false);
+	}
+	return 1;
+}
+
+Dialog: DIALOG_SPAWNCHANGE(const playerid, response, listitem, string: inputtext[])
+{
+	if (!response)
+		return 1;
+
+	switch (listitem)
+	{
+		case 0: Account_SetSpawn(playerid, 1); // normal spawn
+		case 1: Account_SetSpawn(playerid, 2); // house spawn
 	}
 	return 1;
 }

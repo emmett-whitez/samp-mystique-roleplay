@@ -319,12 +319,14 @@ stock Elkor_CreateObjects()
     CreateDynamicPickup(19132, 1, 1315.5989,-1185.9348,23.7129, .streamdistance = 30.00);
 
     CreateDynamic3DTextLabel("["WHITE"ELKOR"MAIN_COLOR"]\n\
-        "WHITE"Da kupite mobilni kucajte\n"MAIN_COLOR"/kupimobilni", MAIN_COLOR_HEX, 1310.2061,-1189.7286,23.7329, 5.00
+        "WHITE"Da kupite mobilni kucajte\n"MAIN_COLOR"/kupimobilni\n\
+        "WHITE"Cena: "DARKGREEN"$10000", MAIN_COLOR_HEX, 1310.2061,-1189.7286,23.7329, 5.00
     );
     CreateDynamicPickup(1239, 1, 1310.2061,-1189.7286,23.7329, .streamdistance = 30.00);
 
     CreateDynamic3DTextLabel("["WHITE"ELKOR"MAIN_COLOR"]\n\
-        "WHITE"Da kupite mp3 player kucajte\n"MAIN_COLOR"/kupimp3", MAIN_COLOR_HEX, 1308.2550,-1187.2788,23.7049, 5.00
+        "WHITE"Da kupite mp3 player kucajte\n"MAIN_COLOR"/kupimp3\n\
+        "WHITE"Cena: "DARKGREEN"$3500", MAIN_COLOR_HEX, 1308.2550,-1187.2788,23.7049, 5.00
     );
     CreateDynamicPickup(1239, 1, 1308.2550,-1187.2788,23.7049, .streamdistance = 30.00);
 	return 1;

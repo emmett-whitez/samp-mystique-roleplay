@@ -28,17 +28,17 @@ static accountSkin[MAX_PLAYERS],
 	accountHours[MAX_PLAYERS],
 	accountHouse[MAX_PLAYERS],
 	accountExp[MAX_PLAYERS],
-	accountJailTime[MAX_PLAYERS],
 	bool:playerSpawned[MAX_PLAYERS],
 
 	// Timers
 	spawnTimer[MAX_PLAYERS],
-	playerJailTimer[MAX_PLAYERS],
-	Timer:playerSKTimer[MAX_PLAYERS];
+	playerSKTimer[MAX_PLAYERS];
 
 // function with tag result used before definition, forcing reparse
-forward Float:Hunger_GetValue(const playerid);
-forward Float:Thirst_GetValue(const playerid);
+forward bool:Selection_GetUI(const playerid);
+
+forward Float: House_GetPos(const houseid, const index);
+forward Float: House_GetIntPos(const houseid, const index);
 
 stock Account_GetSkin(const playerid) return accountSkin[playerid];
 stock Account_GetMoney(const playerid) return accountMoney[playerid];
@@ -54,21 +54,23 @@ stock Account_GetHours(const playerid) return accountHours[playerid];
 stock Account_GetHouse(const playerid) return accountHouse[playerid];
 stock Player_Spawned(const playerid) return playerSpawned[playerid];
 stock Account_GetExp(const playerid) return accountExp[playerid];
-stock Account_GetJailTime(const playerid) return accountJailTime[playerid];
 
-stock Account_SetPassword(const playerid, const string: password[])
+stock Account_SetPassword(const playerid, const password[])
 {
-	strcopy(accountPassword[playerid], password);
+	new Alloc:str_alloc = malloc(16);
+	msets(str_alloc, 0, password);
+	strcpy(accountPassword[playerid], mget(str_alloc, 0));
 
 	new String: str_query_update = str_format(
 		"UPDATE accounts SET account_password = '%e' WHERE account_id = '%d'",
-		Account_GetPassword(playerid), Account_GetID(playerid)
+		mget(str_alloc, 0), Account_GetID(playerid)
 	);
 	mysql_tquery_s(MySQL_GetHandle(), str_query_update);
+	free(str_alloc);
 	return 1;
 }
 
-stock Account_SetEmail(const playerid, const string: email[])
+stock Account_SetEmail(const playerid, const email[])
 {
 	strcopy(accountEmail[playerid], email);
 
@@ -188,18 +190,6 @@ stock Account_SetBankMoney(const playerid, const value)
 	return 1;
 }
 
-stock Account_SetJailTime(const playerid, const min)
-{
-	accountJailTime[playerid] = min;
-
-	new String: str_query_update = str_format(
-		"UPDATE characters SET char_jailtime = '%d' WHERE char_id = '%d'",
-		Account_GetJailTime(playerid), Account_GetCharID(playerid)
-	);
-	mysql_tquery_s(MySQL_GetHandle(), str_query_update);
-	return 1;
-}
-
 stock Account_SetGold(const playerid, const value)
 {
 	accountGold[playerid] = value;
@@ -238,13 +228,11 @@ stock Account_SetHouse(const playerid, const value)
 
 stock Account_PlayerSpawned(const playerid, bool:status) return playerSpawned[playerid] = status;
 
-// Checking account
 hook OnPlayerConnect(playerid)
 {
 	TogglePlayerSpectating(playerid, 1);
 	// PlayAudioStreamForPlayer(playerid, "https://sv11.onlinevideoconverter.com/download?813506-813130");
-	SetPlayerColor(playerid, 0xFFFFFFAA);
-	SendClientMessage(playerid, MAIN_COLOR_HEX, "[GENERATIONZ]: Ocitavanje servera, sacekajte malo!");
+	SendClientMessage(playerid, MAIN_COLOR_HEX, "[SERVER]: Ocitavanje servera, sacekajte malo!");
 
 	// We need to call it twice because objects are already created in OnGameModeInit
 	// so we need to "recall" the function to set object status first to true then to false
@@ -262,7 +250,7 @@ hook OnPlayerConnect(playerid)
 	if (!cache_num_rows())
 	{
 		Dialog_Show(playerid, "DIALOG_REGISTER", DIALOG_STYLE_PASSWORD,
-			""MAIN_COLOR"GENERATIONZ - "WHITE"Registracija",
+			""MAIN_COLOR"gta-world - "WHITE"Registracija",
 			""MAIN_COLOR"_______________________________________________\n\
 			"MAIN_COLOR">>> "WHITE"Unesite zeljenu lozinku\n\
 			"WHITE"Lozinka mora sadrzati najmanje "MAIN_COLOR"%d "WHITE"i najvise "MAIN_COLOR"%d "WHITE"karaktera!\n\
@@ -274,10 +262,16 @@ hook OnPlayerConnect(playerid)
 
 	else
 	{
-		static tmpString[MAX_PASSWORD_LENGTH];
+		new
+			tmp_str[MAX_PASSWORD_LENGTH],
+			Alloc:str_alloc = malloc(sizeof(tmp_str) + 1);
+
 		cache_get_value_name_int(0, "account_id", Account_GetID(playerid));
-		cache_get_value_name(0, "account_password", tmpString);
-		Account_SetPassword(playerid, tmpString);
+		cache_get_value_name(0, "account_password", tmp_str);
+
+		msets(str_alloc, 0, tmp_str);
+		Account_SetPassword(playerid, mget(str_alloc, 0));
+		free(str_alloc);
 
 		task_await(
 			MySQL_QueryS(
@@ -300,17 +294,25 @@ hook OnPlayerConnect(playerid)
 			cache_get_value_name_int(0, "char_skin", tmpInt);
             Account_SetSkin(playerid, tmpInt);
 			cache_get_value_name_int(0, "char_spawn", tmpInt);
-            Account_SetSpawnID(playerid, tmpInt);
+			Account_SetSpawnID(playerid, tmpInt);
+			cache_get_value_name_int(0, "char_vip", tmpInt);
+			Rank_SetTempVIP(playerid, tmpInt);
+			cache_get_value_name_int(0, "char_admin", tmpInt);
+			Rank_SetTempAdmin(playerid, tmpInt);
 			cache_get_value_name_int(0, "char_exp", tmpInt);
             Account_SetExp(playerid, tmpInt);
 			cache_get_value_name_int(0, "char_bankcard", tmpInt);
             Account_SetBankCard(playerid, tmpInt);
+			cache_get_value_name_int(0, "char_atmpincode", tmpInt);
+            Atm_SetPlayerPinCode(playerid, tmpInt);
 			cache_get_value_name_int(0, "char_bankmoney", tmpInt);
             Account_SetBankMoney(playerid, tmpInt);
 			cache_get_value_name_int(0, "char_gold", tmpInt);
             Account_SetGold(playerid, tmpInt);
 			cache_get_value_name_int(0, "char_hours", tmpInt);
             Account_SetHours(playerid, tmpInt);
+			cache_get_value_name_int(0, "char_wl", tmpInt);
+            WantedLevel_Set(playerid, tmpInt);
 			cache_get_value_name_int(0, "char_job", tmpInt);
             Account_SetJob(playerid, tmpInt);
 			cache_get_value_name_int(0, "char_house", tmpInt);
@@ -323,8 +325,6 @@ hook OnPlayerConnect(playerid)
             Org_SetRank(playerid, tmpInt);
 			cache_get_value_name_int(0, "char_marijuana", tmpInt);
             WeedGrower_SetPlayerMarijuana(playerid, tmpInt);
-			cache_get_value_name_int(0, "char_jailtime", tmpInt);
-            Account_SetJailTime(playerid, tmpInt);
 
 			cache_get_value_name_int(0, "char_mobile", tmpInt);
             Mobile_Set(playerid, tmpInt);
@@ -336,11 +336,11 @@ hook OnPlayerConnect(playerid)
             Mobile_SetPower(playerid, tmpInt);
 		}
 
-		InterpolateCameraPos(playerid, 1284.4456, -417.3779, 161.2294, 1163.6970, -1035.5303, 227.6295, 30000);
-		InterpolateCameraLookAt(playerid, 1284.1553, -418.3311, 160.8544, 1163.6310, -1034.5365, 225.3495, 30000);
+		InterpolateCameraPos(playerid, 163.370742, -2130.891113, 3.614542, 150.508148, -1941.372436, 53.552555, 7000);
+		InterpolateCameraLookAt(playerid, 163.097000, -2125.963867, 4.419613, 152.024612, -1945.852172, 51.930122, 7000);
 
 		Dialog_Show(playerid, "DIALOG_LOGIN", DIALOG_STYLE_PASSWORD,
-			""MAIN_COLOR"GENERATIONZ - "WHITE"Prijavljivanje",
+			""MAIN_COLOR"gta-world - "WHITE"Prijavljivanje",
 			""MAIN_COLOR"_______________________________________________\n\n\
 			"WHITE"Unesite tacnu lozinku\n\
 			"WHITE"Lozinka sadrzi "MAIN_COLOR"%d "WHITE"karaktera.\n\
@@ -353,13 +353,14 @@ hook OnPlayerConnect(playerid)
 	}
 
 	Player_ClearChat(playerid, .lines = 60);
+	SetPlayerColor(playerid, 0xFFFFFFAA);
+	SetTimerEx("Timer_UpdateAccHours", 2700000, true, "d", playerid);
 	return Y_HOOKS_CONTINUE_RETURN_1;
 }
 
 hook OnPlayerDisconnect(playerid, reason)
 {
 	UI_SetPlayerIGTD(playerid);
-	HungerThirst_UI(playerid, false, false, false);
 	return Y_HOOKS_CONTINUE_RETURN_1;
 }
 
@@ -367,6 +368,12 @@ hook OnPlayerRequestClass(playerid, classic)
 {
 	if (Account_GetSpawn(playerid) == 1)
 		SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1583.8350, -2338.2874, 13.5890, 54.4807, 0, 0, 0, 0, 0, 0);
+	else if (Account_GetSpawn(playerid) == 2)
+	{
+		new houseid = Account_GetHouse(playerid);
+		SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), House_GetIntPos(houseid, 0), House_GetIntPos(houseid, 1), House_GetIntPos(houseid, 2), 0.0, 0, 0, 0, 0, 0, 0);
+	}
+
 	SpawnPlayer(playerid);
 	return Y_HOOKS_CONTINUE_RETURN_1;
 }
@@ -401,17 +408,11 @@ public Account_InsertCharID(const playerid)
 forward Account_SetSpawnData(const playerid, const spawnid);
 public Account_SetSpawnData(const playerid, const spawnid)
 {
+	KillTimer(spawnTimer[playerid]);
 	switch (spawnid)
 	{
-		case 1:
-		{
-			KillTimer(spawnTimer[playerid]);
-
-			if (Account_GetJailTime(playerid))
-				return Account_SetSpawn(playerid, 2); // jail
-
-			Account_SetSpawn(playerid, Account_GetSpawn(playerid));
-		}
+		case 1: Account_SetSpawn(playerid, 1);
+		case 2: Account_SetSpawn(playerid, 2);
 
 		default:
 		{
@@ -421,22 +422,8 @@ public Account_SetSpawnData(const playerid, const spawnid)
 	return 1;
 }
 
-forward Account_DecreaseJailTime(const playerid);
-public Account_DecreaseJailTime(const playerid)
-{
-	if (!Account_GetJailTime(playerid))
-	{
-		KillTimer(playerJailTimer[playerid]);
-		Account_SetSpawn(playerid, 1);
-		GameTextForPlayer(playerid, "~w~Uspesno ste odlezali zatvorsku kaznu!", 3000, 3);
-		return 1;
-	}
-
-	Account_SetJailTime(playerid, (Account_GetJailTime(playerid) - 1));
-	return 1;
-}
-
-TIMER__ SPAWNKILL_Timer[3000](playerid)
+forward SK_Timer(const playerid);
+public SK_Timer(const playerid)
 {
 	TogglePlayerControllable(playerid, 1);
 
@@ -447,27 +434,26 @@ TIMER__ SPAWNKILL_Timer[3000](playerid)
 			)
 		)
 	);
-
-	if (cache_num_rows())
-	{
-		static Float:tmpFloat;
-		cache_get_value_name_float(0, "char_hunger", tmpFloat);
-        Hunger_SetValue(playerid, tmpFloat);
-		cache_get_value_name_float(0, "char_thirst", tmpFloat);
-        Thirst_SetValue(playerid, tmpFloat);
-	}
-
-	Hunger_PlayerSpawned(playerid);
-	HungerThirst_UI(playerid, true, true, false);
-	HungerThirst_UI(playerid, true, false, true);
-	stop playerSKTimer[playerid];
-
-	if (Account_GetJailTime(playerid))
-		playerJailTimer[playerid] = SetTimerEx("Account_DecreaseJailTime", 10000, true, "d", playerid);
+	KillTimer(playerSKTimer[playerid]);
+	return 1;
 }
 
 stock Account_SetSpawn(const playerid, const spawnid)
 {
+	new String:str_query_update = str_format(
+		"UPDATE characters SET char_spawn = '%d' WHERE char_id = '%d'",
+		spawnid, Account_GetCharID(playerid)
+	);
+	mysql_tquery_s(MySQL_GetHandle(), str_query_update);
+
+	StopAudioStreamForPlayer(playerid);
+	UI_UpdateInfoTD(playerid);
+	TogglePlayerSpectating(playerid, 0);
+	TogglePlayerControllable(playerid, 0);
+
+	GameTextForPlayer(playerid, "~y~ANTI SPAWN KILL ZASTITA U TOKU...", 3000, 3);
+	playerSKTimer[playerid] = SetTimerEx("SK_Timer", 3000, false, "d", playerid);
+
 	switch (spawnid)
 	{
 		case 1:
@@ -476,35 +462,27 @@ stock Account_SetSpawn(const playerid, const spawnid)
             SetPlayerInterior(playerid, 0);
 			SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1583.8350, -2338.2874, 13.5890, 54.4807, 0, 0, 0, 0, 0, 0);
 			SpawnPlayer(playerid);
-			TogglePlayerSpectating(playerid, 0);
-			StopAudioStreamForPlayer(playerid);
-			UI_UpdateInfoTD(playerid);
+			
+			for (new i = 0; i < 30; i++)
+				SendClientMessage(playerid, -1, " ");
 
-			TogglePlayerControllable(playerid, 0);
-			GameTextForPlayer(playerid, "~y~ANTI SPAWN KILL ZASTITA U TOKU...", 3000, 3);
-			playerSKTimer[playerid] = defer SPAWNKILL_Timer(playerid);
+			SendServerMsgF(playerid, "Dobrodosao nazad %s %s.", Player_SplitName(playerid, "name"), Player_SplitName(playerid, "lastname"));
+			SendServerMsgF(playerid, "Vas trenutni level: %d | Exp: %d/%d", Account_GetScore(playerid), Account_GetExp(playerid), (Account_GetScore(playerid) * 2));
 		}
 
 		case 2:
 		{
-			Dialog_Show(playerid, "DIALOG_JAILMESSAGE", DIALOG_STYLE_MSGBOX,
-				""RED"GENERATIONZ - "WHITE"Zatvor",
-				""RED"Kazna: "WHITE"Prebaceni ste u zatvor jer ste napustili server,\n\
-				"WHITE"a bili ste trazeni od policije!\n"RED"Zatvorska kazna(minuti): "WHITE"%d",
-				""RED"Izadji", "", Account_GetJailTime(playerid)
-			);
-
-			SetPlayerVirtualWorld(playerid, 0);
+			new houseid = Account_GetHouse(playerid);
+			SetPlayerVirtualWorld(playerid, House_GetVW(houseid));
             SetPlayerInterior(playerid, 0);
-			SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), -1968.6575, 320.3499, 1552.1387, 175.1276, 0, 0, 0, 0, 0, 0);
+			SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), House_GetIntPos(houseid, 0), House_GetIntPos(houseid, 1), House_GetIntPos(houseid, 2), 0.0, 0, 0, 0, 0, 0, 0);
 			SpawnPlayer(playerid);
-			TogglePlayerSpectating(playerid, 0);
-			StopAudioStreamForPlayer(playerid);
-			UI_UpdateInfoTD(playerid);
+			
+			for (new i = 0; i < 30; i++)
+				SendClientMessage(playerid, -1, " ");
 
-			TogglePlayerControllable(playerid, 0);
-			GameTextForPlayer(playerid, "~y~ANTI SPAWN KILL ZASTITA U TOKU...", 3000, 3);
-			playerSKTimer[playerid] = defer SPAWNKILL_Timer(playerid);
+			SendServerMsgF(playerid, "Dobrodosao nazad %s %s.", Player_SplitName(playerid, "name"), Player_SplitName(playerid, "lastname"));
+			SendServerMsgF(playerid, "Vas trenutni level: %d | Exp: %d/%d", Account_GetScore(playerid), Account_GetExp(playerid), (Account_GetScore(playerid) * 2));
 		}
 
 		default:
@@ -524,7 +502,7 @@ Dialog: DIALOG_REGISTER(const playerid, response, listitem, string: inputtext[])
 	if (!(MIN_PASSWORD_LENGTH <= strlen(inputtext) <= MAX_PASSWORD_LENGTH))
 	{
 		Dialog_Show(playerid, "DIALOG_REGISTER", DIALOG_STYLE_PASSWORD,
-			""MAIN_COLOR"GENERATIONZ - "WHITE"Registracija",
+			""MAIN_COLOR"gta-world - "WHITE"Registracija",
 			""MAIN_COLOR"_______________________________________________\n\
 			"MAIN_COLOR">>> "WHITE"Unesite zeljenu lozinku\n\
 			"WHITE"Lozinka mora sadrzati najmanje "MAIN_COLOR"%d "WHITE"i najvise "MAIN_COLOR"%d "WHITE"karaktera!\n\
@@ -547,7 +525,7 @@ Dialog: DIALOG_REGISTER(const playerid, response, listitem, string: inputtext[])
     mysql_tquery_s(MySQL_GetHandle(), str_query_insert_char, "Account_InsertCharID", "d", playerid);
 
     Dialog_Show(playerid, "DIALOG_GENDER", DIALOG_STYLE_LIST,
-		""MAIN_COLOR"GENERATIONZ - "WHITE"Registracija",
+		""MAIN_COLOR"gta-world - "WHITE"Registracija",
 		"Musko\nZensko",
 		""MAIN_COLOR"Odaberi", "Izlaz"
 	);
@@ -568,7 +546,7 @@ Dialog: DIALOG_GENDER(const playerid, response, listitem, string: inputtext[])
 
 	Account_SetSkin(playerid, Account_GetGender(playerid) == 1 ? 240 : 193);
 	Dialog_Show(playerid, "DIALOG_COUNTRY", DIALOG_STYLE_LIST,
-		""MAIN_COLOR"GENERATIONZ - "WHITE"Registracija",
+		""MAIN_COLOR"gta-world - "WHITE"Registracija",
 		"Srbija\nHrvatska\nBosna i Hercegovina\nCrna Gora\nMakedonija\nOstalo",
 		""MAIN_COLOR"Odaberi", "Izlaz"
 	);
@@ -588,7 +566,7 @@ Dialog: DIALOG_COUNTRY(const playerid, response, listitem, string: inputtext[])
 	mysql_tquery_s(MySQL_GetHandle(), str_query_update);
 
 	Dialog_Show(playerid, "DIALOG_DOB", DIALOG_STYLE_INPUT,
-		""MAIN_COLOR"GENERATIONZ - "WHITE"Registracija",
+		""MAIN_COLOR"gta-world - "WHITE"Registracija",
 		""WHITE"Unesite datum Vaseg rodjenja u formatu: YYYY-MM-DD (npr. 2005-08-13):",
 		""MAIN_COLOR"Unesi", "Izlaz"
 	);
@@ -617,6 +595,10 @@ Dialog: DIALOG_DOB(const playerid, response, listitem, string: inputtext[])
 		"UPDATE characters SET char_dob = '%e' WHERE char_id = '%d'", accountDOB[playerid], Account_GetCharID(playerid)
 	);
 	mysql_tquery_s(MySQL_GetHandle(), str_query_update);
+
+	for (new i = 0; i < 30; i++)
+		SendClientMessage(playerid, -1, " ");
+
 	SendServerMsgF(playerid, "Dobrodosao %s.", ReturnPlayerName(playerid));
 	return 1;
 }
@@ -636,15 +618,12 @@ Dialog: DIALOG_LOGIN(const playerid, response, listitem, string: inputtext[])
 		SetPlayerScore(playerid, Account_GetScore(playerid));
 		UI_SetPlayerIGTD(playerid);
 		// Movement_CreateUI(playerid, true);
-
-		SendServerMsgF(playerid, "Dobrodosao nazad %s %s.", Player_SplitName(playerid, "name"), Player_SplitName(playerid, "lastname"));
-		SendServerMsgF(playerid, "Vas trenutni level: %d | Exp: %d/%d", Account_GetScore(playerid), Account_GetExp(playerid), (Account_GetScore(playerid) * 2));
 	}
 	else
 	{
 		SendErrorMsg(playerid, "Netacna lozinka.");	
 		Dialog_Show(playerid, "DIALOG_LOGIN", DIALOG_STYLE_PASSWORD,
-			""MAIN_COLOR"GENERATIONZ - "WHITE"Prijavljivanje",
+			""MAIN_COLOR"gta-world - "WHITE"Prijavljivanje",
 			""MAIN_COLOR"_______________________________________________\n\n\
 			"WHITE"Unesite tacnu lozinku\n\
 			"WHITE"Lozinka sadrzi "MAIN_COLOR"%d "WHITE"karaktera.\n\
@@ -659,7 +638,8 @@ Dialog: DIALOG_LOGIN(const playerid, response, listitem, string: inputtext[])
 // Update player hours spent on server
 // 3,600,000ms = 1 hour
 // 2,700,000ms = 45 minutes
-PTASK__ UPDATE_AccountHours[2700000](playerid)
+forward Timer_UpdateAccHours(const playerid);
+public Timer_UpdateAccHours(const playerid)
 {
 	new salary, base, exp;
 
@@ -690,4 +670,5 @@ PTASK__ UPDATE_AccountHours[2700000](playerid)
 		"Izlaz", "",
 		salary, Account_GetScore(playerid)
 	);
+	return 1;
 }

@@ -3,9 +3,20 @@
 #endif
 #define _INC_mod_commands_inc
 
-TIMER__ KICK_PLAYER[2000](playerid)
+// static wlTimer[MAX_PLAYERS];
+
+// forward Timer_RemoveWLBug(const playerid);
+// public Timer_RemoveWLBug(const playerid)
+// {
+// 	WantedLevel_Set(playerid, 0);
+// 	return 1;
+// }
+
+forward Timer_KickPlayer(const playerid);
+public Timer_KickPlayer(const playerid)
 {
 	Kick(playerid);
+	return 1;
 }
 
 Command(name: mh, rank: Rank_Moderator(), args: playerid, const string: params[])
@@ -15,10 +26,163 @@ Command(name: mh, rank: Rank_Moderator(), args: playerid, const string: params[]
 		""DARKGREEN"______________________________________________________\n\n\
 		"DARKGREEN"Moderator: "WHITE"/veh /pos /kill /cc /portjelka /kick /vrespawn /portkuca\n\
 		"DARKGREEN"Moderator: "WHITE"/portkiosk /jetpack /pm /playmusic /a /givegun /gethere /goto\n\
-		"DARKGREEN"Moderator: "WHITE"/setorg /setorgrank /setskin\n\
+		"DARKGREEN"Moderator: "WHITE"/setorg /setorgrank /setskin /port /setstats /dmevent /stopdmevent\n\
 		"DARKGREEN"______________________________________________________",
 		""DARKGREEN"Zatvori"
 	);
+	return 1;
+}
+
+Command(name: pos, rank: Rank_Moderator(), args: playerid, const string: params[])
+{
+	static Float: x, Float: y, Float: z;
+	if (sscanf(params, "fff", x, y, z))
+		return SendSyntaxMsg(playerid, "/pos [x] [y] [z]");
+
+	Streamer_UpdateEx(playerid, x, y, z, .compensatedtime = 2000);
+	return 1;
+}
+
+Command(name: kill, rank: Rank_Moderator(), args: playerid, const string: params[])
+{
+	if (isnull(params) && !IsNumeric(params))
+		return SendSyntaxMsg(playerid, "/kill [targetid]");
+
+	if (!IsPlayerConnected(strval(params)))
+		return SendErrorMsg(playerid, "Taj korisnik nije prijavljen!");
+
+	SetPlayerHealth(strval(params), 0.0);
+	SendServerMsgF(strval(params), "%s Vas je ubio.", ReturnPlayerName(playerid));
+	SendServerMsgF(playerid, "Ubili ste %s.", ReturnPlayerName(strval(params)));
+
+	// wlTimer[strval(params)] = SetTimerEx("Timer_RemoveWLBug", 2000, false, "d", strval(params));
+	return 1;
+}
+
+Command(name: cc, rank: Rank_Moderator(), args: playerid, const string: params[])
+{
+	if (isnull(params) && !IsNumeric(params))
+		return SendSyntaxMsg(playerid, "/cc [lines]");
+
+	if (!(10 <= strval(params) <= 60))
+		return SendErrorMsg(playerid, "Ne mozete ispod 10 linija i iznad 60 linija!");
+
+	foreach (new i: Player)
+		Player_ClearChat(i, playerid, strval(params));
+	return 1;
+}
+
+Command(name: setstats, rank: Rank_Moderator(), args: playerid, const string: params[])
+{
+	static
+		targetid,
+		option[12],
+		value;
+
+	SendClientMessage(playerid, X11_GRAY, "*** Stats opcije ***");
+	SendClientMessage(playerid, X11_GRAY, "[score][money][skin][spawn][bankcard][gold][hours][job][orgid][orgrank]");
+	SendClientMessage(playerid, X11_GRAY, "[marijuana][wl][jailtime][mobile][mobilenum][mobilecredit][mobilepower]");
+
+	if (sscanf(params, "rs[12]i", targetid, option, value))
+		return SendSyntaxMsg(playerid, "/setstats [targetid] [option] [value]");
+
+	if (!strcmp(option, "score", false))
+	{
+		if (!(1 <= value <= 1000))
+			return SendErrorMsg(playerid, "Ne mozete postaviti level ispod 1 i iznad 1000!");
+
+		Account_SetScore(targetid, value);
+		SetPlayerScore(targetid, value);
+
+		SendCustomMsgF(targetid, X11_GRAY, "* %s Vam je postavio level %d. *", ReturnPlayerName(playerid), value);
+		SendCustomMsgF(targetid, X11_GRAY, "* Igracu %s ste postavili level %d. *", ReturnPlayerName(targetid), value);
+	}
+
+	else if (!strcmp(option, "money", false))
+	{
+		if (!(1 <= value <= 999999999))
+			return SendErrorMsg(playerid, "Ne mozete postaviti novac ispod $1 i iznad $999.999.999!");
+
+		Account_SetMoney(targetid, value);
+		ResetPlayerMoney(targetid);
+		GivePlayerMoney(targetid, value);
+
+		SendCustomMsgF(targetid, X11_GRAY, "* %s Vam je postavio novac na $%d. *", ReturnPlayerName(playerid), value);
+		SendCustomMsgF(targetid, X11_GRAY, "* Igracu %s ste postavili novac na $%d. *", ReturnPlayerName(targetid), value);
+	}
+
+	else if (!strcmp(option, "skin", false))
+	{
+		if (!(1 <= value <= 311))
+			return SendErrorMsg(playerid, "Ne mozete postaviti skin ispod 1 i iznad 311!");
+
+		Account_SetSkin(targetid, value);
+		SetPlayerSkin(targetid, value);
+		UI_UpdateInfoTD(playerid);
+
+		SendCustomMsgF(targetid, X11_GRAY, "* %s Vam je postavio skin %d. *", ReturnPlayerName(playerid), value);
+		SendCustomMsgF(targetid, X11_GRAY, "* Igracu %s ste postavili skin %d. *", ReturnPlayerName(targetid), value);
+	}
+
+	else if (!strcmp(option, "spawn", false))
+	{
+		if (!(1 <= value <= 3))
+			return SendErrorMsg(playerid, "Ne mozete postaviti spawn ispod 1 i iznad 3!");
+
+		Account_SetSpawn(targetid, value);
+
+		SendCustomMsgF(targetid, X11_GRAY, "* %s Vam je postavio spawn na %d. *", ReturnPlayerName(playerid), value);
+		SendCustomMsgF(targetid, X11_GRAY, "* Igracu %s ste postavili spawn na %d. *", ReturnPlayerName(targetid), value);
+	}
+
+	else if (!strcmp(option, "bankcard", false))
+	{
+		if (value > 1)
+			return SendErrorMsg(playerid, "Ne mozete postaviti bankovni racun ispod 0 i iznad 1!");
+
+		Account_SetBankCard(targetid, value);
+		UI_UpdateInfoTD(playerid);
+
+		SendCustomMsgF(targetid, X11_GRAY, "* %s Vam je postavio status bankovnog racuna na %d. *", ReturnPlayerName(playerid), value);
+		SendCustomMsgF(targetid, X11_GRAY, "* Igracu %s ste postavili status bankovnog racuna na %d. *", ReturnPlayerName(targetid), value);
+	}
+
+	else if (!strcmp(option, "gold", false))
+	{
+		if (value > 9999)
+			return SendErrorMsg(playerid, "Ne mozete postaviti spawn ispod 0 i iznad 9999!");
+
+		Account_SetGold(targetid, value);
+		UI_UpdateInfoTD(playerid);
+
+		SendCustomMsgF(targetid, X11_GRAY, "* %s Vam je postavio zlato na %d. *", ReturnPlayerName(playerid), value);
+		SendCustomMsgF(targetid, X11_GRAY, "* Igracu %s ste postavili zlato na %d. *", ReturnPlayerName(targetid), value);
+	}
+
+	else if (!strcmp(option, "hours", false))
+	{
+		if (value > 9999999)
+			return SendErrorMsg(playerid, "Ne mozete postaviti spawn ispod 0 i iznad 9999999!");
+
+		Account_SetHours(targetid, value);
+
+		SendCustomMsgF(targetid, X11_GRAY, "* %s Vam je postavio sate igre na %d. *", ReturnPlayerName(playerid), value);
+		SendCustomMsgF(targetid, X11_GRAY, "* Igracu %s ste postavili sate igre na %d. *", ReturnPlayerName(targetid), value);
+	}
+
+	else if (!strcmp(option, "job", false))
+	{
+		if (value > 4)
+			return SendErrorMsg(playerid, "Ne mozete postaviti spawn ispod 0 i iznad 4!");
+
+		Account_SetJob(targetid, value);
+
+		SendCustomMsgF(targetid, X11_GRAY, "* %s Vam je postavio posao na %d. *", ReturnPlayerName(playerid), value);
+		SendCustomMsgF(targetid, X11_GRAY, "* Igracu %s ste postavili posao na %d. *", ReturnPlayerName(targetid), value);
+	}
+	
+	else
+		return SendErrorMsg(playerid, "Pogresna opcija!");
 	return 1;
 }
 
@@ -36,7 +200,7 @@ Command(name: kick, rank: Rank_Moderator(), args: playerid, const string: params
 
 	SendCustomMsgF(targetid, X11_RED, "(Kick): "WHITE"Kikovani ste od strane %s zbog "RED"%s"WHITE".", ReturnPlayerName(playerid), reason);
 	SendCustomMsgF(playerid, X11_RED, "(Kick): "WHITE"Kikovali ste %s zbog "RED"%s"WHITE".", ReturnPlayerName(targetid), reason);
-	defer KICK_PLAYER(targetid);
+	SetTimerEx("Timer_KickPlayer", 1000, false, "d", targetid);
 	return 1;
 }
 
@@ -274,5 +438,11 @@ Command(name: setskin, rank: Rank_Moderator(), args: playerid, const string: par
 	Account_SetSkin(targetid, skinid);
 	SendCustomMsgF(playerid, X11_CYAN, "#Skin: "WHITE"Postavili ste igracu %s skin id %d.", ReturnPlayerName(targetid), skinid);
 	SendCustomMsgF(targetid, X11_CYAN, "#Skin: "WHITE"%s Vam je postavio skin id %d.", ReturnPlayerName(playerid), skinid);
+	return 1;
+}
+
+Command(name: port, rank: Rank_Moderator(), args: playerid, const string: params[])
+{
+	Port_ShowMenu(playerid);
 	return 1;
 }

@@ -1,158 +1,117 @@
-#if defined _INC_rank_init_inc
-    #endinput
+#if defined _INC_rank_rework
+	#endinput
 #endif
-#define _INC_rank_init_inc
+#define _INC_rank_rework
 
-#include <YSI_Coding\y_hooks>
+#include <YSI_coding\y_hooks>
 
-new rankID[MAX_PLAYERS],
-	rankValue[MAX_PLAYERS];
-
-#define Rank_GetUniqueID(%0) rankID[%0]
-
-enum E_RANK_DATA
+enum
 {
-	E_RANK_PLAYER = 1,
-	E_RANK_MODERATOR,
-	E_RANK_ADMINISTRATOR
+	e_RANK_VIP = 0,
+	e_RANK_ADMIN_JUNIOR,
+	e_RANK_ADMIN_SENIOR,
+	e_RANK_ADMIN_OWNER
 };
 
-hook OnPlayerConnect(playerid)
+static
+	playerVIP[MAX_PLAYERS],
+	playerAdmin[MAX_PLAYERS];
+
+stock Rank_VIP() return e_RANK_VIP;
+stock Rank_Junior() return e_RANK_ADMIN_JUNIOR;
+stock Rank_Senior() return e_RANK_ADMIN_SENIOR;
+stock Rank_Owner() return e_RANK_ADMIN_OWNER;
+stock Rank_IsPlayerVIP(const playerid) return playerVIP[playerid];
+stock Rank_GetPlayerAdminLevel(const playerid) return playerAdmin[playerid];
+stock Rank_InsufficientMsg(const playerid)
+	return (SendErrorMsg(playerid, "Nemate odredjeni rank za koriscenje ove komande!"));
+
+stock Rank_SetTempVIP(const playerid, const level) return playerVIP[playerid] = level; 
+stock Rank_SetVIP(const playerid, const adminid, const level)
 {
-	task_await(
-		MySQL_QueryS(
-			str_format(
-				"SELECT * FROM ranks WHERE rank_name = '%e'", ReturnPlayerName(playerid)
-			)
-		)
+	if (Rank_GetPlayerAdminLevel(playerid))
+			return SendErrorMsg(adminid, "Taj igrac je administrator!");
+
+	playerVIP[playerid] = level;
+
+	new String:str_query_update = str_format(
+		"UPDATE characters SET char_vip = '%d' WHERE char_id = '%d'", level, Account_GetCharID(playerid)
 	);
-
-	if (!cache_num_rows())
-		return Rank_Create(playerid, -1, "igrac");
-
-	static tmpString[MAX_PLAYER_NAME];
-	cache_get_value_name_int(0, "rank_id", rankID[playerid]);
-	cache_get_value_name(0, "rank_value", tmpString);
-	Rank_Set(playerid, -1, tmpString);
-	return Y_HOOKS_CONTINUE_RETURN_1;
-}
-
-hook OnPlayerText(playerid, text[])
-{
-    new tmp_str[128];
-    if (Rank_GetID(playerid) == Rank_Player())
-        format(tmp_str, sizeof(tmp_str), "{C0C0C0}[%d]"LIGHTGREEN"%s kaze {C0C0C0}{FFFFFF} %s", playerid, ReturnPlayerName(playerid), text);
-    
-    else if (Rank_GetID(playerid) == Rank_Moderator())
-        format(tmp_str, sizeof(tmp_str), "{C0C0C0}[%d]"LIGHTGREEN"%s kaze {C0C0C0}[Moderator]{FFFFFF} %s", playerid, ReturnPlayerName(playerid), text);
-
-    else
-        format(tmp_str, sizeof(tmp_str), "{C0C0C0}[%d]"LIGHTGREEN"%s kaze {C0C0C0}[Administrator]{FFFFFF} %s", playerid, ReturnPlayerName(playerid), text);
-
-    Rank_RadiusMessage(20.0, playerid, tmp_str, X11_WHITE, X11_WHITE, X11_WHITE, X11_WHITE, X11_WHITE);
-    return Y_HOOKS_BREAK_RETURN_0;
-}
-
-hook OnPlayerEnterCheckpoint(playerid)
-{
-	DisablePlayerCheckpoint(playerid);
-	return Y_HOOKS_CONTINUE_RETURN_1;
-}
-
-forward OnRankCreated(const playerid);
-public OnRankCreated(const playerid)
-{
-    rankID[playerid] = cache_insert_id();
-    return 1;
-}
-
-stock Rank_Player() return _:E_RANK_PLAYER;
-stock Rank_Moderator() return _:E_RANK_MODERATOR;
-stock Rank_Administrator() return _:E_RANK_ADMINISTRATOR;
-stock Rank_GetID(const playerid) return rankValue[playerid];
-
-stock Rank_Create(const targetid, const playerid, const string: rank[])
-{
-	rankValue[targetid] = Rank_GetIDByName(rank);
-
-	new String: str_query_update = str_format("INSERT INTO ranks (rank_name, rank_value) VALUES ('%e', '%e')", ReturnPlayerName(targetid), rank);
-	mysql_tquery_s(MySQL_GetHandle(), str_query_update, "OnRankCreated", "d", targetid);
-
-	if (IsPlayerConnected(playerid))
+	mysql_tquery_s(MySQL_GetHandle(), str_query_update);
+	
+	if (level)
 	{
-		SendInfoMsgF(playerid, "Postavili ste igracu %s rank %s.", ReturnPlayerName(targetid), rank);
-		SendInfoMsgF(targetid, "Administrator %s Vam je postavio rank %s.", ReturnPlayerName(playerid), rank);
+		if (Rank_IsPlayerVIP(playerid))
+			return SendErrorMsg(adminid, "Taj igrac je vec VIP!");
+
+		SendCustomMsgF(playerid, X11_LIMEGREEN, "[VIP]: "WHITE"Cestitamo! "LIMEGREEN"%s "WHITE"Vam je dodelio rank VIP!", ReturnPlayerName(adminid));
+		SendCustomMsgF(adminid, X11_LIMEGREEN, "[VIP]: "WHITE"Igracu "LIMEGREEN"%s "WHITE"ste dodelili rank VIP!", ReturnPlayerName(playerid));
 	}
 
 	else
-		SendInfoMsgF(targetid, "Administrator Vam je postavio rank %s.", rank);
+	{
+		if (!Rank_IsPlayerVIP(playerid))
+			return SendErrorMsg(adminid, "Taj igrac nema rank VIP!");
 
-	if (!strcmp(rank, "igrac"))
-		Account_SetSkin(targetid, Account_GetGender(targetid) == 1 ? 240 : 193);
-	else if (!strcmp(rank, "moderator"))
-		Account_SetSkin(targetid, Account_GetGender(targetid) == 1 ? 171 : 169);
-	else if (!strcmp(rank, "admin"))
-		Account_SetSkin(targetid, Account_GetGender(targetid) == 1 ? 217 : 192);
+		SendCustomMsgF(playerid, X11_RED, "[VIP]: "WHITE"Admin "RED"%s "WHITE"Vam je skinuo rank VIP!", ReturnPlayerName(adminid));
+		SendCustomMsgF(adminid, X11_RED, "[VIP]: "WHITE"Igracu "RED"%s "WHITE"ste skinuli rank VIP!", ReturnPlayerName(playerid));
+	}
 	return 1;
 }
 
-stock Rank_Set(const targetid, const playerid, const string: rank[])
+stock Rank_SetTempAdmin(const playerid, const level) return playerAdmin[playerid] = level;
+stock Rank_SetAdminLevel(const playerid, const adminid, const level)
 {
-    rankValue[targetid] = Rank_GetIDByName(rank);
+	if (Rank_GetPlayerAdminLevel(playerid) == level)
+		return SendErrorMsg(adminid, "Taj igrac je vec taj admin level!");
 
-    new String: str_query_update = str_format(
-        "UPDATE ranks SET rank_value = '%e' WHERE rank_id = '%d'",
-        rank, Rank_GetUniqueID(targetid)
-    );
-    mysql_tquery_s(MySQL_GetHandle(), str_query_update);
+	if (!(0 <= level <= 3))
+		return SendErrorMsg(adminid, "Admin level ne moze biti manji od 0 i veci od 3!");
 
-    if (IsPlayerConnected(playerid))
+	playerAdmin[playerid] = level;
+
+	new String:str_query_update = str_format(
+		"UPDATE characters SET char_admin = '%d' WHERE char_id = '%d'", level, Account_GetCharID(playerid)
+	);
+	mysql_tquery_s(MySQL_GetHandle(), str_query_update);
+
+	if (level)
 	{
-		SendInfoMsgF(playerid, "Postavili ste igracu %s rank %s.", ReturnPlayerName(targetid), rank);
-		SendInfoMsgF(targetid, "Administrator %s Vam je postavio rank %s.", ReturnPlayerName(playerid), rank);
+		SendCustomMsgF(playerid, X11_YELLOW, "[ADMIN]: "WHITE"Cestitamo! "YELLOW"%s "WHITE"Vam je dodelio rank %s!", ReturnPlayerName(adminid), Rank_GetAdminName(level));
+		SendCustomMsgF(adminid, X11_YELLOW, "[ADMIN]: "WHITE"Igracu "YELLOW"%s "WHITE"ste dodelili rank %s!", ReturnPlayerName(playerid), Rank_GetAdminName(level));
+
+		Account_SetSkin(playerid, 294);
+		UI_UpdateInfoTD(playerid);
 	}
 
 	else
-		SendInfoMsgF(targetid, "Administrator Vam je postavio rank %s.", rank);
-
-	if (!strcmp(rank, "igrac"))
-		Account_SetSkin(targetid, Account_GetGender(targetid) == 1 ? 240 : 193);
-	else if (!strcmp(rank, "moderator"))
-		Account_SetSkin(targetid, Account_GetGender(targetid) == 1 ? 171 : 169);
-	else if (!strcmp(rank, "admin"))
-		Account_SetSkin(targetid, Account_GetGender(targetid) == 1 ? 217 : 192);
-    return 1;
-}
-
-stock Rank_GetIDByName(const string: rank[])
-{
-	static tmpInt;
-	if (!strcmp(rank, "igrac", false))
-		return tmpInt = _:E_RANK_PLAYER;
-	else if (!strcmp(rank, "moderator", false))
-		return tmpInt = _:E_RANK_MODERATOR;
-	else if (!strcmp(rank, "admin", false))
-		return tmpInt = _:E_RANK_ADMINISTRATOR;
-	return tmpInt;
-}
-
-stock Rank_GetNameByID(const rankid)
-{
-	static tmpString[MAX_PLAYER_NAME];
-	switch (rankid)
 	{
-		case 1: tmpString = "Igrac";
-		case 2: tmpString = "Moderator";
-		case 3: tmpString = "Admin";
+		SendCustomMsgF(playerid, X11_RED, "[ADMIN]: "WHITE"Admin "RED"%s "WHITE"Vam je skinuo rank admina!", ReturnPlayerName(adminid));
+		SendCustomMsgF(adminid, X11_RED, "[ADMIN]: "WHITE"Igracu "RED"%s "WHITE"ste skinuli rank admina!", ReturnPlayerName(playerid));
+
+		Account_SetSkin(playerid, 1);
+		UI_UpdateInfoTD(playerid);
+	}
+	return 1;
+}
+
+stock Rank_GetAdminName(const adminlevel)
+{
+	static tmpString[16];
+	switch (adminlevel)
+	{
+		case 1: { tmpString = "Junior Admin"; }
+		case 2: { tmpString = "Senior Admin"; }
+		case 3: { tmpString = "Owner"; }
 	}
 	return tmpString;
 }
 
-stock Rank_StaffMessage(const colour, const string: msg[], va_args<>)
+stock Rank_AdminMessage(const colour, const string[], va_args<>)
 {
 	foreach (new i: Player)
-		if (Rank_GetID(i) == Rank_Moderator() || Rank_GetID(i) == Rank_Administrator())
-			return va_SendClientMessage(i, colour, va_return(msg, va_start<2>));
+		if (Rank_GetPlayerAdminLevel(i) >= Rank_Junior())
+			va_SendClientMessage(i, colour, va_return(string, va_start<2>));
 	return 0;
 }
 
@@ -197,13 +156,32 @@ stock Rank_RadiusMessage(Float: radi, playerid, const string: string[], c1, c2, 
 	return 1;
 }
 
-PTASK__ FIX_StaffVehicle[1500](playerid)
+hook OnPlayerText(playerid, text[])
 {
-    if ((Rank_GetID(playerid) == Rank_Moderator()) || (Rank_GetID(playerid) == Rank_Administrator()) && IsPlayerInAnyVehicle(playerid))
-    {
-        RepairVehicle(GetPlayerVehicleID(playerid));
-        SetVehicleHealth(GetPlayerVehicleID(playerid), 1000.00);
-    }
+	if (Mobile_IsCallOngoing(playerid))
+	{
+		new tmpCallString[128];
+		format(tmpCallString, sizeof(tmpCallString), "Mobilni: "LIGHTGRAY"%s: "WHITE"%s.", ReturnPlayerName(playerid), text);
+		SendCustomMsgF(Mobile_WhoCalled(playerid), X11_YELLOW, tmpCallString);
+		format(tmpCallString, sizeof(tmpCallString), "Mobilni: "LIGHTGRAY"%s: "WHITE"%s.", ReturnPlayerName(playerid), text);
+		SendCustomMsgF(Mobile_SelectedPlayer(Mobile_WhoCalled(playerid)), X11_YELLOW, tmpCallString);
+		return Y_HOOKS_BREAK_RETURN_0;
+	}
+
+    new tmpString[128];
+    if (Rank_GetPlayerAdminLevel(playerid) == Rank_Junior())
+        format(tmpString, sizeof(tmpString), "{C0C0C0}[%d]"LIGHTGREEN"%s kaze {C0C0C0}[Junior Admin]{FFFFFF} %s", playerid, ReturnPlayerName(playerid), text);
+    
+    else if (Rank_GetPlayerAdminLevel(playerid) == Rank_Senior())
+        format(tmpString, sizeof(tmpString), "{C0C0C0}[%d]"LIGHTGREEN"%s kaze {C0C0C0}[Senior Admin]{FFFFFF} %s", playerid, ReturnPlayerName(playerid), text);
+
+    else if (Rank_GetPlayerAdminLevel(playerid) == Rank_Owner())
+        format(tmpString, sizeof(tmpString), "{C0C0C0}[%d]"LIGHTGREEN"%s kaze {C0C0C0}[Owner]{FFFFFF} %s", playerid, ReturnPlayerName(playerid), text);
+    else
+    	format(tmpString, sizeof(tmpString), "{C0C0C0}[%d]"LIGHTGREEN"%s kaze {C0C0C0}{FFFFFF} %s", playerid, ReturnPlayerName(playerid), text);
+    
+    Rank_RadiusMessage(20.0, playerid, tmpString, X11_WHITE, X11_WHITE, X11_WHITE, X11_WHITE, X11_WHITE);
+    return Y_HOOKS_BREAK_RETURN_0;
 }
 
 // Include other module
