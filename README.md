@@ -1,6 +1,7 @@
-# samp-generationz
+# 
 
-[![sampctl](https://img.shields.io/badge/sampctl-samp--generationz-2f2f2f.svg?style=for-the-badge)](https://github.com/emmett-white/samp-generationz)
+[![sampctl](https://img.shields.io/badge/gta_world---?label=sampctl)](https://github.com/emmett-white/gta-world)
+<!-- [![sampctl](https://img.shields.io/badge/sampctl-samp--generationz-2f2f2f.svg?style=for-the-badge)](https://github.com/emmett-white/samp-generationz) -->
 
 <!--
 Short description of your library, why it's useful, some examples, pictures or
