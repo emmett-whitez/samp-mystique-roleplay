@@ -1,5 +1,5 @@
 # gta-world
-[![sampctl](https://img.shields.io/badge/gta_world---?label=sampctl)](https://github.com/emmett-white/gta-world)
+[![sampctl](https://img.shields.io/badge/gta_world---?label=sampctl)](https://github.com/emmett-whitez/gta-world)
 
 ## Installation
 
