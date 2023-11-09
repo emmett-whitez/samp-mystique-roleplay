@@ -15,6 +15,8 @@
 	6. Drop mobile
 */
 
+const MOBILE_ATTACH_SLOT = 8;
+
 new
 	mobileStatus[MAX_PLAYERS],
 	mobileNumber[MAX_PLAYERS],
@@ -23,7 +25,22 @@ new
 	mobileSelectedPlayer[MAX_PLAYERS],
 	bool:mobileUIStatus[MAX_PLAYERS],
 	mobileStringNumber[MAX_PLAYERS][8],
+	mobileRinging[MAX_PLAYERS],
+	mobilePlayerWhoCalled[MAX_PLAYERS],
+	mobileAnswered[MAX_PLAYERS],
+	mobileInCall[MAX_PLAYERS],
 	PlayerText:mobileTextDraw[MAX_PLAYERS][29] = {PlayerText:INVALID_PLAYER_TEXT_DRAW,...};
+
+stock Mobile_GetPhoneSlot() return MOBILE_ATTACH_SLOT;
+stock Mobile_SelectedPlayer(const playerid) return mobileSelectedPlayer[playerid];
+stock Mobile_SelectPlayer(const playerid, const targetid) return mobileSelectedPlayer[playerid] = targetid;
+stock Mobile_Ringing(const playerid) return mobileRinging[playerid];
+stock Mobile_SetRing(const playerid, const value) return mobileRinging[playerid] = value;
+stock Mobile_WhoCalled(const playerid) return mobilePlayerWhoCalled[playerid];
+stock Mobile_Answered(const playerid) return mobileAnswered[playerid];
+stock Mobile_SetAnswer(const playerid, const status) return mobileAnswered[playerid] = status;
+stock Mobile_CallOngoing(const playerid, const status) return mobileInCall[playerid] = status;
+stock Mobile_IsCallOngoing(const playerid) return mobileInCall[playerid];
 
 stock Mobile_Get(const playerid) return mobileStatus[playerid];
 stock Mobile_Set(const playerid, const status)
@@ -73,9 +90,6 @@ stock Mobile_SetPower(const playerid, const status)
 	return 1;
 }
 
-stock Mobile_SelectedPlayer(const playerid) return mobileSelectedPlayer[playerid];
-stock Mobile_SelectPlayer(const playerid, const targetid) return mobileSelectedPlayer[playerid] = targetid;
-
 stock Mobile_GetUI(const playerid) return mobileUIStatus[playerid];
 stock Mobile_CreateUI(const playerid)
 {
@@ -88,6 +102,7 @@ stock Mobile_CreateUI(const playerid)
 			mobileTextDraw[playerid][i] = PlayerText:INVALID_PLAYER_TEXT_DRAW;
 		}
 		mobileUIStatus[playerid] = false;
+		strcopy(mobileStringNumber[playerid], "");
 		CancelSelectTextDraw(playerid);
 		return 1;
 	}
@@ -425,7 +440,17 @@ hook OnPlayerClickPlayerTD(playerid, PlayerText:playertextid)
 		}
 	}
 
-	if (playertextid == mobileTextDraw[playerid][28])
+	if (playertextid == mobileTextDraw[playerid][25])
+	{
+		Dialog_Show(playerid, "DIALOG_CALLINGPLAYER", DIALOG_STYLE_MSGBOX,
+			""YELLOW"Mobilni telefon - "WHITE"Pozivanje",
+			""YELLOW"* "WHITE"Da li ste sigurni da zelite pozvati '"YELLOW"%s' "WHITE"broj?",
+			""YELLOW"Da", "Ne", mobileStringNumber[playerid]
+		);
+		Mobile_CreateUI(playerid);
+	}
+
+	else if (playertextid == mobileTextDraw[playerid][28])
 	{
 		if (isnull(mobileStringNumber[playerid]))
 			return 0;
@@ -434,4 +459,20 @@ hook OnPlayerClickPlayerTD(playerid, PlayerText:playertextid)
 		PlayerTextDrawSetString(playerid, mobileTextDraw[playerid][14], mobileStringNumber[playerid]);
 	}
 	return Y_HOOKS_CONTINUE_RETURN_1;
+}
+
+Dialog: DIALOG_CALLINGPLAYER(const playerid, response, listitem, string: inputtext[])
+{
+	// if (!response)
+	// 	return Command_Call(name: telefon, args: playerid, "");
+
+	if (Mobile_Ringing(Mobile_SelectedPlayer(playerid)))
+		return SendErrorMsg(playerid, "Birani korisnik je trenutno zauzet!");
+
+	GameTextForPlayer(playerid, "~y~POZIVANJE...", 3000, 3);
+	SendCustomMsgF(Mobile_SelectedPlayer(playerid), X11_YELLOW, "Mobilni: "WHITE"Zvoni Vam telefon od korisnika %s. Da se javite "YELLOW"/p"WHITE", da odbijete "YELLOW"/h"WHITE".", ReturnPlayerName(playerid));
+	Mobile_SetRing(Mobile_SelectedPlayer(playerid), 1);
+
+	mobilePlayerWhoCalled[Mobile_SelectedPlayer(playerid)] = playerid;
+	return 1;
 }

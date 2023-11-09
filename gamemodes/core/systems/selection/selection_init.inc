@@ -42,7 +42,7 @@ hook OnPlayerClickPlayerTD(playerid, PlayerText:playertextid)
     else if (playertextid == selectionTextDraw[playerid][5])
     {
         Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-            ""MAIN_COLOR"GENERATIONZ - "WHITE"VOZILO",
+            ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
             "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
         );
         Selection_CreateUI(playerid);
@@ -221,6 +221,8 @@ stock Selection_CreateUI(const playerid)
 
     SelectTextDraw(playerid, X11_GRAY);
     selectionTextDrawStatus[playerid] = true;
+
+    SendInfoMsg(playerid, "Ako vam ostanu textdrawovi i ne mozete da ih sklonite, kucajte /selectui!");
     return 1;
 }
 
@@ -240,7 +242,7 @@ stock Selection_UpdateCarStatus(const playerid)
     strcopy(tmpString[9], Vehicle_GetBootStatus(selectionCarModel[playerid]) == 1 ? ""LIGHTGREEN"Otvoren" : ""DARKRED"Zatvoren");
 
     Dialog_Show(playerid, "DIALOG_CONTROLCAR", DIALOG_STYLE_TABLIST_HEADERS,
-        ""MAIN_COLOR"GENERATIONZ - "WHITE"VOZILO",
+        ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
         ""WHITE"Opcija\t"WHITE"Status\n\
         Lociraj vozilo\t-\n\
         Leva prednja vrata\t%s\n\
@@ -290,7 +292,7 @@ Dialog: DIALOG_VEHICLETYPE(const playerid, response, listitem, string: inputtext
 
                 format(tmpString, sizeof(tmpString), "%s\n%s", tmpString, Vehicle_GetModelName(Vehicle_GetPlayerModelID(playerid, i)));
                 Dialog_Show(playerid, "DIALOG_VEHICLESELECT", DIALOG_STYLE_LIST,
-                    ""MAIN_COLOR"GENERATIONZ - "WHITE"VOZILO",
+                    ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
                     tmpString, ""MAIN_COLOR"Odaberi", "Izlaz"
                 );
             }
@@ -299,7 +301,7 @@ Dialog: DIALOG_VEHICLETYPE(const playerid, response, listitem, string: inputtext
         case 1:
         {
             Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-                ""MAIN_COLOR"GENERATIONZ - "WHITE"VOZILO",
+                ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
                 "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
             );
             SendErrorMsg(playerid, "Ta opcija trenutno nije u mogucnosti!");
@@ -308,7 +310,7 @@ Dialog: DIALOG_VEHICLETYPE(const playerid, response, listitem, string: inputtext
         case 2:
         {
             Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-                ""MAIN_COLOR"GENERATIONZ - "WHITE"VOZILO",
+                ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
                 "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
             );
             SendErrorMsg(playerid, "Ta opcija trenutno nije u mogucnosti!");
@@ -317,7 +319,7 @@ Dialog: DIALOG_VEHICLETYPE(const playerid, response, listitem, string: inputtext
         case 3:
         {
             Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-                ""MAIN_COLOR"GENERATIONZ - "WHITE"VOZILO",
+                ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
                 "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
             );
             SendErrorMsg(playerid, "Ta opcija trenutno nije u mogucnosti!");
@@ -342,7 +344,7 @@ Dialog: DIALOG_CONTROLCAR(const playerid, response, listitem, string: inputtext[
 {
     if (!response)
         return Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-            ""MAIN_COLOR"GENERATIONZ - "WHITE"VOZILO",
+            ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
             "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
         );
 
@@ -407,7 +409,7 @@ Dialog: DIALOG_HOUSEMENU(const playerid, response, listitem, string: inputtext[]
         case 0:
         {
             Dialog_Show(playerid, "DIALOG_HOUSEDESC", DIALOG_STYLE_INPUT,
-                ""MAIN_COLOR"GENERATIONZ - "WHITE"Opis kuce",
+                ""MAIN_COLOR"gta-world - "WHITE"Opis kuce",
                 "Unesite opis za vasu kucu:",
                 ""MAIN_COLOR"Potvrdi", "Nazad"
             );
@@ -425,7 +427,7 @@ Dialog: DIALOG_HOUSEMENU(const playerid, response, listitem, string: inputtext[]
         case 2:
         {
             Dialog_Show(playerid, "DIALOG_HOUSESELL", DIALOG_STYLE_INPUT,
-                ""MAIN_COLOR"GENERATIONZ - "WHITE"Prodaj kucu",
+                ""MAIN_COLOR"gta-world - "WHITE"Prodaj kucu",
                 "Unesite id igraca kome zelite prodati i cenu za koliko zelite prodati kucu:",
                 ""MAIN_COLOR"Unesi", "Nazad"
             );

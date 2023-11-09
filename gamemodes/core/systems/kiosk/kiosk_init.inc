@@ -42,26 +42,34 @@ hook OnPlayerEditDynObject(playerid, STREAMER_TAG_OBJECT:objectid, response, Flo
 {
 	if (response == EDIT_RESPONSE_FINAL)
 	{
-		new kioskid = Kiosk_ReturnCurrentID(playerid);
-		kioskX[kioskid] = x;
-		kioskY[kioskid] = y;
-		kioskZ[kioskid] = z;
-		kioskRotX[kioskid] = rx;
-		kioskRotY[kioskid] = ry;
-		kioskRotZ[kioskid] = rz;
+		static kioskNearby[MAX_PLAYERS] = 0;
+		for (new i = 0; i < MAX_KIOSK; i++)
+			if (IsPlayerInRangeOfPoint(playerid, 5.0, kioskX[i], kioskY[i], kioskZ[i]))
+				kioskNearby[playerid] = 1;
 
-		new String: str_query_update = str_format(
-			"UPDATE kiosk SET \
-			kiosk_x = '%f', kiosk_y = '%f', kiosk_z = '%f', kiosk_rx = '%f', kiosk_ry = '%f', kiosk_rz = '%f' \
-			WHERE kiosk_id = '%d'",
-			x, y, z, rx, ry, rz, (kioskid + 1)
-		);
-		mysql_tquery_s(MySQL_GetHandle(), str_query_update);
+		if (kioskNearby[playerid])
+		{
+			new kioskid = Kiosk_ReturnCurrentID(playerid);
+			kioskX[kioskid] = x;
+			kioskY[kioskid] = y;
+			kioskZ[kioskid] = z;
+			kioskRotX[kioskid] = rx;
+			kioskRotY[kioskid] = ry;
+			kioskRotZ[kioskid] = rz;
 
-		SendInfoMsgF(playerid, "%s ste kiosk %d.", (Kiosk_GetEditingMode(playerid) ? "Azurirali" : "Kreirali"), kioskid);
+			new String: str_query_update = str_format(
+				"UPDATE kiosk SET \
+				kiosk_x = '%f', kiosk_y = '%f', kiosk_z = '%f', kiosk_rx = '%f', kiosk_ry = '%f', kiosk_rz = '%f' \
+				WHERE kiosk_id = '%d'",
+				x, y, z, rx, ry, rz, (kioskid + 1)
+			);
+			mysql_tquery_s(MySQL_GetHandle(), str_query_update);
 
-		if (Kiosk_GetEditingMode(playerid))
-			Kiosk_SetEditingMode(playerid, false);
+			SendInfoMsgF(playerid, "%s ste kiosk %d.", (Kiosk_GetEditingMode(playerid) ? "Azurirali" : "Kreirali"), kioskid);
+
+			if (Kiosk_GetEditingMode(playerid))
+				Kiosk_SetEditingMode(playerid, false);
+		}
 	}
 	return Y_HOOKS_CONTINUE_RETURN_1;
 }
@@ -70,172 +78,174 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
 	if (newkeys & KEY_NO)
 	{
-		new kioskid = Kiosk_GetNearby(playerid);
-		if (kioskid == Kiosk_GetMaxIDs())
-			return Y_HOOKS_BREAK_RETURN_0;
+		for (new j = 0; j < MAX_KIOSK; j++)
+		{
+			if (IsPlayerInRangeOfPoint(playerid, 5.0, kioskX[j], kioskY[j], kioskZ[j]))
+			{
+				kioskTextDraw[playerid][0] = CreatePlayerTextDraw(playerid, 169.600006, 134.466674, "LD_POOL:BALL");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][0], 64.000000, 71.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][0], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][0], 796937471);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][0], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][0], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][0], 4);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][0], 0);
 
-		kioskTextDraw[playerid][0] = CreatePlayerTextDraw(playerid, 169.600006, 134.466674, "LD_POOL:BALL");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][0], 64.000000, 71.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][0], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][0], 796937471);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][0], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][0], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][0], 4);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][0], 0);
+				kioskTextDraw[playerid][1] = CreatePlayerTextDraw(playerid, 169.860000, 134.166702, "LD_POOL:BALL");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][1], 64.000000, 71.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][1], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][1], 796937471);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][1], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][1], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][1], 4);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][1], 0);
 
-		kioskTextDraw[playerid][1] = CreatePlayerTextDraw(playerid, 169.860000, 134.166702, "LD_POOL:BALL");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][1], 64.000000, 71.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][1], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][1], 796937471);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][1], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][1], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][1], 4);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][1], 0);
+				kioskTextDraw[playerid][2] = CreatePlayerTextDraw(playerid, 408.399993, 134.460006, "LD_POOL:BALL");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][2], 64.000000, 71.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][2], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][2], 796937471);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][2], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][2], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][2], 4);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][2], 0);
 
-		kioskTextDraw[playerid][2] = CreatePlayerTextDraw(playerid, 408.399993, 134.460006, "LD_POOL:BALL");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][2], 64.000000, 71.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][2], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][2], 796937471);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][2], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][2], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][2], 4);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][2], 0);
+				kioskTextDraw[playerid][3] = CreatePlayerTextDraw(playerid, 408.399993, 134.460006, "LD_POOL:BALL");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][3], 64.000000, 71.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][3], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][3], 796937471);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][3], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][3], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][3], 4);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][3], 0);
 
-		kioskTextDraw[playerid][3] = CreatePlayerTextDraw(playerid, 408.399993, 134.460006, "LD_POOL:BALL");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][3], 64.000000, 71.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][3], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][3], 796937471);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][3], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][3], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][3], 4);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][3], 0);
+				kioskTextDraw[playerid][4] = CreatePlayerTextDraw(playerid, 247.398437, 134.460006, "LD_POOL:BALL");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][4], 64.000000, 71.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][4], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][4], 796937471);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][4], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][4], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][4], 4);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][4], 0);
 
-		kioskTextDraw[playerid][4] = CreatePlayerTextDraw(playerid, 247.398437, 134.460006, "LD_POOL:BALL");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][4], 64.000000, 71.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][4], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][4], 796937471);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][4], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][4], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][4], 4);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][4], 0);
+				kioskTextDraw[playerid][5] = CreatePlayerTextDraw(playerid, 330.203491, 134.460006, "LD_POOL:BALL");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][5], 64.000000, 71.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][5], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][5], 796937471);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][5], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][5], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][5], 4);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][5], 0);
 
-		kioskTextDraw[playerid][5] = CreatePlayerTextDraw(playerid, 330.203491, 134.460006, "LD_POOL:BALL");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][5], 64.000000, 71.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][5], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][5], 796937471);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][5], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][5], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][5], 4);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][5], 0);
+				kioskTextDraw[playerid][6] = CreatePlayerTextDraw(playerid, 173.500000, 131.355560, "");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][6], 55.000000, 81.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][6], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][6], -1);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][6], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][6], 0x00000000);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][6], 5);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][6], 0);
+				PlayerTextDrawSetPreviewModel(playerid, kioskTextDraw[playerid][6], 2703);
+				PlayerTextDrawSetPreviewRot(playerid, kioskTextDraw[playerid][6], 90.000000, 0.000000, -10.000000, 1.000000);
+				PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][6], true);
 
-		kioskTextDraw[playerid][6] = CreatePlayerTextDraw(playerid, 173.500000, 131.355560, "");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][6], 55.000000, 81.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][6], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][6], -1);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][6], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][6], 0x00000000);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][6], 5);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][6], 0);
-		PlayerTextDrawSetPreviewModel(playerid, kioskTextDraw[playerid][6], 2703);
-		PlayerTextDrawSetPreviewRot(playerid, kioskTextDraw[playerid][6], 90.000000, 0.000000, -10.000000, 1.000000);
-		PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][6], true);
+				kioskTextDraw[playerid][7] = CreatePlayerTextDraw(playerid, 248.500000, 136.333312, "");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][7], 61.000000, 66.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][7], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][7], -1);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][7], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][7], 0x00000000);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][7], 5);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][7], 0);
+				PlayerTextDrawSetPreviewModel(playerid, kioskTextDraw[playerid][7], 19580);
+				PlayerTextDrawSetPreviewRot(playerid, kioskTextDraw[playerid][7], 90.000000, 0.000000, 0.000000, 1.000000);
+				PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][7], true);
 
-		kioskTextDraw[playerid][7] = CreatePlayerTextDraw(playerid, 248.500000, 136.333312, "");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][7], 61.000000, 66.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][7], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][7], -1);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][7], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][7], 0x00000000);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][7], 5);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][7], 0);
-		PlayerTextDrawSetPreviewModel(playerid, kioskTextDraw[playerid][7], 19580);
-		PlayerTextDrawSetPreviewRot(playerid, kioskTextDraw[playerid][7], 90.000000, 0.000000, 0.000000, 1.000000);
-		PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][7], true);
+				kioskTextDraw[playerid][8] = CreatePlayerTextDraw(playerid, 331.500000, 139.444396, "");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][8], 63.000000, 59.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][8], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][8], -1);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][8], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][8], 0x00000000);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][8], 5);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][8], 0);
+				PlayerTextDrawSetPreviewModel(playerid, kioskTextDraw[playerid][8], 19564);
+				PlayerTextDrawSetPreviewRot(playerid, kioskTextDraw[playerid][8], 0.000000, 0.000000, 180.000000, 1.000000);
+				PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][8], true);
 
-		kioskTextDraw[playerid][8] = CreatePlayerTextDraw(playerid, 331.500000, 139.444396, "");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][8], 63.000000, 59.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][8], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][8], -1);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][8], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][8], 0x00000000);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][8], 5);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][8], 0);
-		PlayerTextDrawSetPreviewModel(playerid, kioskTextDraw[playerid][8], 19564);
-		PlayerTextDrawSetPreviewRot(playerid, kioskTextDraw[playerid][8], 0.000000, 0.000000, 180.000000, 1.000000);
-		PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][8], true);
+				kioskTextDraw[playerid][9] = CreatePlayerTextDraw(playerid, 370.500000, 132.599945, "");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][9], 90.000000, 69.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][9], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][9], -1);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][9], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][9], 0x00000000);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][9], 5);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][9], 0);
+				PlayerTextDrawSetPreviewModel(playerid, kioskTextDraw[playerid][9], 1484);
+				PlayerTextDrawSetPreviewRot(playerid, kioskTextDraw[playerid][9], 0.000000, -30.000000, 180.000000, 1.000000);
+				PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][9], true);
 
-		kioskTextDraw[playerid][9] = CreatePlayerTextDraw(playerid, 370.500000, 132.599945, "");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][9], 90.000000, 69.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][9], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][9], -1);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][9], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][9], 0x00000000);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][9], 5);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][9], 0);
-		PlayerTextDrawSetPreviewModel(playerid, kioskTextDraw[playerid][9], 1484);
-		PlayerTextDrawSetPreviewRot(playerid, kioskTextDraw[playerid][9], 0.000000, -30.000000, 180.000000, 1.000000);
-		PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][9], true);
+				kioskTextDraw[playerid][10] = CreatePlayerTextDraw(playerid, 317.400177, 219.888885, "_");
+				PlayerTextDrawLetterSize(playerid, kioskTextDraw[playerid][10], 0.215000, 1.046221);
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][10], 0.000000, 363.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][10], 2);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][10], -1);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][10], 0);
+				PlayerTextDrawSetOutline(playerid, kioskTextDraw[playerid][10], 1);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][10], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][10], 1);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][10], 1);
 
-		kioskTextDraw[playerid][10] = CreatePlayerTextDraw(playerid, 317.400177, 219.888885, "_");
-		PlayerTextDrawLetterSize(playerid, kioskTextDraw[playerid][10], 0.215000, 1.046221);
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][10], 0.000000, 363.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][10], 2);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][10], -1);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][10], 0);
-		PlayerTextDrawSetOutline(playerid, kioskTextDraw[playerid][10], 1);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][10], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][10], 1);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][10], 1);
+				kioskTextDraw[playerid][11] = CreatePlayerTextDraw(playerid, 241.000000, 241.488891, "LD_SPAC:white");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][11], 68.000000, 21.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][11], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][11], 1392408217);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][11], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][11], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][11], 4);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][11], 0);
 
-		kioskTextDraw[playerid][11] = CreatePlayerTextDraw(playerid, 241.000000, 241.488891, "LD_SPAC:white");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][11], 68.000000, 21.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][11], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][11], 1392408217);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][11], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][11], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][11], 4);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][11], 0);
+				kioskTextDraw[playerid][12] = CreatePlayerTextDraw(playerid, 325.900970, 241.466705, "LD_SPAC:white");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][12], 68.000000, 21.000000);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][12], 1);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][12], -16777063);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][12], 0);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][12], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][12], 4);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][12], 0);
 
-		kioskTextDraw[playerid][12] = CreatePlayerTextDraw(playerid, 325.900970, 241.466705, "LD_SPAC:white");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][12], 68.000000, 21.000000);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][12], 1);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][12], -16777063);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][12], 0);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][12], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][12], 4);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][12], 0);
+				kioskTextDraw[playerid][13] = CreatePlayerTextDraw(playerid, 273.599975, 247.466644, "KUPI");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][13], 8.0, 20.0);
+				PlayerTextDrawLetterSize(playerid, kioskTextDraw[playerid][13], 0.234000, 0.977777);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][13], 2);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][13], -1);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][13], 0);
+				PlayerTextDrawSetOutline(playerid, kioskTextDraw[playerid][13], 1);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][13], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][13], 1);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][13], 1);
+				PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][13], true);
 
-		kioskTextDraw[playerid][13] = CreatePlayerTextDraw(playerid, 273.599975, 247.466644, "KUPI");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][13], 8.0, 20.0);
-		PlayerTextDrawLetterSize(playerid, kioskTextDraw[playerid][13], 0.234000, 0.977777);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][13], 2);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][13], -1);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][13], 0);
-		PlayerTextDrawSetOutline(playerid, kioskTextDraw[playerid][13], 1);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][13], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][13], 1);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][13], 1);
-		PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][13], true);
+				kioskTextDraw[playerid][14] = CreatePlayerTextDraw(playerid, 359.599975, 247.466644, "IZLAZ");
+				PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][14], 8.0, 20.0);
+				PlayerTextDrawLetterSize(playerid, kioskTextDraw[playerid][14], 0.234000, 0.977777);
+				PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][14], 2);
+				PlayerTextDrawColor(playerid, kioskTextDraw[playerid][14], -1);
+				PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][14], 0);
+				PlayerTextDrawSetOutline(playerid, kioskTextDraw[playerid][14], 1);
+				PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][14], 255);
+				PlayerTextDrawFont(playerid, kioskTextDraw[playerid][14], 1);
+				PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][14], 1);
+				PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][14], true);
 
-		kioskTextDraw[playerid][14] = CreatePlayerTextDraw(playerid, 359.599975, 247.466644, "IZLAZ");
-		PlayerTextDrawTextSize(playerid, kioskTextDraw[playerid][14], 8.0, 20.0);
-		PlayerTextDrawLetterSize(playerid, kioskTextDraw[playerid][14], 0.234000, 0.977777);
-		PlayerTextDrawAlignment(playerid, kioskTextDraw[playerid][14], 2);
-		PlayerTextDrawColor(playerid, kioskTextDraw[playerid][14], -1);
-		PlayerTextDrawSetShadow(playerid, kioskTextDraw[playerid][14], 0);
-		PlayerTextDrawSetOutline(playerid, kioskTextDraw[playerid][14], 1);
-		PlayerTextDrawBackgroundColor(playerid, kioskTextDraw[playerid][14], 255);
-		PlayerTextDrawFont(playerid, kioskTextDraw[playerid][14], 1);
-		PlayerTextDrawSetProportional(playerid, kioskTextDraw[playerid][14], 1);
-		PlayerTextDrawSetSelectable(playerid, kioskTextDraw[playerid][14], true);
+				for (new i = 0; i < 15; i++)
+					PlayerTextDrawShow(playerid, kioskTextDraw[playerid][i]);
 
-		for (new i = 0; i < 15; i++)
-			PlayerTextDrawShow(playerid, kioskTextDraw[playerid][i]);
+				SelectTextDraw(playerid, 0x00000080);
+				SendInfoMsg(playerid, "Ukoliko vam ostanu textdrawovi i ne mozete da ih sklonite, kucajte /kioskui!");
 
-		SelectTextDraw(playerid, 0x00000080);
-		SendInfoMsg(playerid, "Ukoliko vam ostanu textdrawovi i ne mozete da ih sklonite, kucajte /kioskui!");
-
-		kioskChoosingItem[playerid] = 1;
+				kioskChoosingItem[playerid] = 1;
+			}
+		}
 	}
 	return Y_HOOKS_CONTINUE_RETURN_1;
 }
@@ -263,7 +273,7 @@ hook OnPlayerClickPlayerTD(playerid, PlayerText:playertextid)
 	if (playertextid == kioskTextDraw[playerid][13] && kioskItemSelected[playerid])
 	{
 		Dialog_Show(playerid, "DIALOG_KIOSKBUY", DIALOG_STYLE_MSGBOX,
-			""MAIN_COLOR"GENERATIONZ - "WHITE"KIOSK",
+			""MAIN_COLOR"gta-world -"WHITE"KIOSK",
 			""WHITE"Odabrano: "MAIN_COLOR"%s\n"WHITE"Za kupovinu pritisnite "MAIN_COLOR"Kupi"WHITE".",
 			""MAIN_COLOR"Kupi", "Izlaz", kioskItems[kioskItemSelected[playerid] - 1][0][0]
 		);
@@ -335,6 +345,9 @@ stock Kiosk_Create(const kioskid, Float:x, Float:y, Float:z)
 
 stock Kiosk_Destroy(const kioskid)
 {
+	kioskX[kioskid] = 0.00;
+	kioskY[kioskid] = 0.00;
+	kioskZ[kioskid] = 0.00;
 	kioskID[kioskid] = MAX_KIOSK;
 	kioskCreated[kioskid] = 0;
 	DestroyDynamicObject(kioskObject[kioskid]);
@@ -374,6 +387,7 @@ stock Kiosk_GetNearby(const playerid)
 
 stock Kiosk_DestroyUI(const playerid)
 {
+	kioskChoosingItem[playerid] = 0;
 	for (new i = 0; i < 15; i++)
 	{
 		PlayerTextDrawDestroy(playerid, kioskTextDraw[playerid][i]);

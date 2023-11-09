@@ -39,6 +39,18 @@ public Float: House_GetPos(const houseid, const index)
     return ret;
 }
 
+public Float: House_GetIntPos(const houseid, const index)
+{
+    static Float:ret = -1.00;
+    switch (index)
+    {
+        case 0: ret = houseIntX[houseid];
+        case 1: ret = houseIntY[houseid];
+        case 2: ret = houseIntZ[houseid];
+    }
+    return ret;
+}
+
 hook OnGameModeInit()
 {
     mysql_tquery(MySQL_GetHandle(), "SELECT * FROM houses", "House_Load");

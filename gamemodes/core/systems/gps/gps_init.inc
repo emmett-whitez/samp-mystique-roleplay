@@ -65,7 +65,6 @@ public GPS_Load()
 
         format(gpsStoreString, sizeof(gpsStoreString), "%s[%d]. %s\n", gpsStoreString, gpsID[i], gpsName[i]);
         gpsCreated[i] = 1;
-
         gpsTotal++;
     }
 
@@ -95,6 +94,13 @@ stock GPS_Create(const gpsid, const gpsname[], Float:gpsx, Float:gpsy, Float:gps
 stock GPS_ShowMenu(const playerid)
 {
     Dialog_Show(playerid, "DIALOG_GPSMENU", DIALOG_STYLE_LIST, "GPS - Lokacije", gpsStoreString, "Odaberi", "Izlaz");
+    return 1;
+}
+
+stock GPS_Disable(const playerid)
+{
+    DisablePlayerCheckpoint(playerid);
+    KillTimer(gpsTimer[playerid]);
     return 1;
 }
 
