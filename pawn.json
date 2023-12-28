@@ -1,6 +1,6 @@
 {
 	"user": "emmett-whitez",
-	"repo": "samp-generationz",
+	"repo": "samp-mystique-roleplay",
 	"entry": "gamemodes/main.pwn",
 	"output": "gamemodes/main.amx",
 	"dependencies": [
@@ -9,17 +9,12 @@
 		"Y-Less/sscanf",
 		"pawn-lang/YSI-Includes:v5.06.1932",
 		"samp-incognito/samp-streamer-plugin",
-		"pBlueG/SA-MP-MySQL",
 		"Southclaws/pawn-chrono",
 		"emmett-white/samp-easy-dialog",
-		"AGraber/pawn-plus-mysql",
 		"oscar-broman/strlib",
-		"katursis/Pawn.Regex",
 		"Southclaws/progress2",
-		"emmett-white/samp-winter-edition",
-		"IllidanS4/PawnPlus:v1.4.1",
-		"xunder-matth/samp-altchat",
-		"ziggi/FCNPC:v2.0.4"
+		"ziggi/FCNPC:v2.0.8",
+		"Southclaws/zcmd"
 	],
 	"local": true,
 	"runtime": {
@@ -27,12 +22,12 @@
 		"mode": "server",
 		"rcon_password": "44",
 		"port": 7777,
-		"hostname": "[GZ] Generation Z \u003e\u003e Uskoro",
+		"hostname": "[MystiqueRP]: In progress...",
 		"maxplayers": 50,
 		"language": "",
 		"mapname": "Balkan",
 		"weburl": "www.sa-mp.com",
-		"gamemodetext": "GenerationZ v1.0",
+		"gamemodetext": "M:RP v1.0",
 		"announce": true,
 		"lanmode": false,
 		"query": true,
@@ -73,29 +68,6 @@
 				"-d3",
 				"-E",
 				"-Z"
-			],
-			"includes": [
-				"gamemodes/database",
-				"gamemodes/utils",
-				"gamemodes/core/accounts",
-				"gamemodes/core/ranks",
-				"gamemodes/core/player",
-				"gamemodes/world",
-				"gamemodes/core/player/jobs",
-				"gamemodes/core/systems/winteredition",
-				"gamemodes/core/systems/rent",
-				"gamemodes/core/systems/houses",
-				"gamemodes/core/systems/vehicles",
-				"gamemodes/core/systems/benches",
-				"gamemodes/core/systems/hunger",
-				"gamemodes/core/systems/kiosk",
-				"gamemodes/core/systems/selection",
-				"gamemodes/core/systems/orgs",
-				"gamemodes/core/systems/gps",
-				"gamemodes/core/systems/wanted",
-				"gamemodes/core/systems/mobile",
-				"gamemodes/core/systems/port",
-				"gamemodes/core/systems/safezones"
 			],
 			"compiler": {}
 		}

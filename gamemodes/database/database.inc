@@ -25,12 +25,10 @@ static CreateDatabaseConnection()
 {
 	new MySQLOpt: options = mysql_init_options();
     mysql_set_option(options, AUTO_RECONNECT, true);
-    mysql_set_option(options, MULTI_STATEMENTS, true);
-    mysql_set_option(options, POOL_SIZE, 2);
 
     MySQL_GetHandle() = mysql_connect("localhost", "root", "", "balkanlite_db", options);
-
-    if (mysql_errno(MySQL_GetHandle()))
+    // MySQL_GetHandle() = mysql_connect("localhost", "sql_1092216_C54", "KBtpz8kD", "sql_1092216_C54", options);
+    if (MySQL_GetHandle() == MYSQL_INVALID_HANDLE || mysql_errno(MySQL_GetHandle()))
     {
         print("[MySQL]: Nije moguce uspostaviti konekciju sa databazom!");
         SendRconCommand("exit");
@@ -44,5 +42,5 @@ static CreateDatabaseConnection()
 // OnQueryError - REQUIRED
 public OnQueryError(errorid, const error[], const callback[], const query[], MySQL:handle) return 1;
 
-stock Task: MySQL_Query(const query[]) return mysql_aquery(MySQL_GetHandle(), query, true);
-stock Task: MySQL_QueryS(ConstStringTag:query) return mysql_aquery_s(MySQL_GetHandle(), query, true);
+// stock Task: MySQL_Query(const query[]) return mysql_aquery(MySQL_GetHandle(), query, true);
+// stock Task: MySQL_QueryS(ConstStringTag:query) return mysql_aquery_s(MySQL_GetHandle(), query, true);

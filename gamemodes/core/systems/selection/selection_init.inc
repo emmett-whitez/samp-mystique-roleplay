@@ -35,6 +35,8 @@ hook OnPlayerClickPlayerTD(playerid, PlayerText:playertextid)
 
     else if (playertextid == selectionTextDraw[playerid][4])
     {
+        if (Account_GetHouse(playerid) == -1)
+            return SendErrorMsg(playerid, "Nemate kucu!");
         House_OpenMenu(playerid);
         Selection_CreateUI(playerid);
     }
@@ -42,8 +44,8 @@ hook OnPlayerClickPlayerTD(playerid, PlayerText:playertextid)
     else if (playertextid == selectionTextDraw[playerid][5])
     {
         Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-            ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
-            "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
+            D_CAPTION,
+            "Automobil 1\nAutomobil 2\nMotor\nBicikl", ""MAIN_COLOR"Odaberi", "Izlaz"
         );
         Selection_CreateUI(playerid);
     }
@@ -242,7 +244,7 @@ stock Selection_UpdateCarStatus(const playerid)
     strcopy(tmpString[9], Vehicle_GetBootStatus(selectionCarModel[playerid]) == 1 ? ""LIGHTGREEN"Otvoren" : ""DARKRED"Zatvoren");
 
     Dialog_Show(playerid, "DIALOG_CONTROLCAR", DIALOG_STYLE_TABLIST_HEADERS,
-        ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
+        D_CAPTION,
         ""WHITE"Opcija\t"WHITE"Status\n\
         Lociraj vozilo\t-\n\
         Leva prednja vrata\t%s\n\
@@ -271,47 +273,27 @@ Dialog: DIALOG_VEHICLETYPE(const playerid, response, listitem, string: inputtext
     {
         case 0:
         {
-            task_await(
-                MySQL_QueryS(
-                    str_format("SELECT * FROM vehicles WHERE vehicle_owner = '%e' ORDER BY vehicle_owner ASC", ReturnPlayerName(playerid))
-                )
-            );
+            if (!Account_GetCar(playerid, 1))
+                return SendErrorMsg(playerid, "Nemate vozilo na tom slotu!");
 
-            if (!cache_num_rows())
-                return SendErrorMsg(playerid, "Nemate nijedan automobil!");
-
-            static rows, tmpString[64];
-            strcopy(tmpString, "");
-
-            cache_get_row_count(rows);
-            for (new i = 0; i < rows; i++)
-            {
-                static tmpInt;
-                cache_get_value_name_int(i, "vehicle_model", tmpInt);
-                Vehicle_SetPlayerModelID(playerid, i, tmpInt);
-
-                format(tmpString, sizeof(tmpString), "%s\n%s", tmpString, Vehicle_GetModelName(Vehicle_GetPlayerModelID(playerid, i)));
-                Dialog_Show(playerid, "DIALOG_VEHICLESELECT", DIALOG_STYLE_LIST,
-                    ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
-                    tmpString, ""MAIN_COLOR"Odaberi", "Izlaz"
-                );
-            }
+            selectionCarModel[playerid] = Account_GetCar(playerid, 1);
+            Selection_UpdateCarStatus(playerid);
         }
 
         case 1:
         {
-            Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-                ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
-                "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
-            );
-            SendErrorMsg(playerid, "Ta opcija trenutno nije u mogucnosti!");
+            if (!Account_GetCar(playerid, 2))
+                return SendErrorMsg(playerid, "Nemate vozilo na tom slotu!");
+
+            selectionCarModel[playerid] = Account_GetCar(playerid, 2);
+            Selection_UpdateCarStatus(playerid);
         }
 
         case 2:
         {
             Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-                ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
-                "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
+                D_CAPTION,
+                "Automobil 1\nAutomobil 2\nMotor\nBicikl", ""MAIN_COLOR"Odaberi", "Izlaz"
             );
             SendErrorMsg(playerid, "Ta opcija trenutno nije u mogucnosti!");
         }
@@ -319,8 +301,8 @@ Dialog: DIALOG_VEHICLETYPE(const playerid, response, listitem, string: inputtext
         case 3:
         {
             Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-                ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
-                "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
+                D_CAPTION,
+                "Automobil 1\nAutomobil 2\nMotor\nBicikl", ""MAIN_COLOR"Odaberi", "Izlaz"
             );
             SendErrorMsg(playerid, "Ta opcija trenutno nije u mogucnosti!");
         }
@@ -329,30 +311,42 @@ Dialog: DIALOG_VEHICLETYPE(const playerid, response, listitem, string: inputtext
     return 1;
 }
 
-Dialog: DIALOG_VEHICLESELECT(const playerid, response, listitem, string: inputtext[])
+Dialog: DIALOG_VEHICLESELECT1(const playerid, response, listitem, string: inputtext[])
 {
     if (!response)
         return Selection_CreateUI(playerid);
 
-    selectionCarModel[playerid] = Vehicle_GetPlayerModelID(playerid, listitem);
+    selectionCarModel[playerid] = Account_GetCar(playerid, 1);
     Selection_UpdateCarStatus(playerid);
     return 1;
 }
 
+Dialog: DIALOG_VEHICLESELECT2(const playerid, response, listitem, string: inputtext[])
+{
+    if (!response)
+        return Selection_CreateUI(playerid);
+
+    selectionCarModel[playerid] = Account_GetCar(playerid, 2);
+    Selection_UpdateCarStatus(playerid);
+    return 1;
+}
 
 Dialog: DIALOG_CONTROLCAR(const playerid, response, listitem, string: inputtext[])
 {
     if (!response)
         return Dialog_Show(playerid, "DIALOG_VEHICLETYPE", DIALOG_STYLE_LIST,
-            ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
-            "Automobil\nMotor\nBicikl\nTraktor", ""MAIN_COLOR"Odaberi", "Izlaz"
+            D_CAPTION,
+            "Automobil 1\nAutomobil 2\nMotor\nBicikl", ""MAIN_COLOR"Odaberi", "Izlaz"
         );
 
     switch (listitem)
     {
         case 1..4:
         {
-            if (GetVehicleModel(GetPlayerVehicleID(playerid)) != selectionCarModel[playerid])
+            // if (Vehicle_ReturnModel(GetPlayerVehicleID(playerid)) != selectionCarModel[playerid])
+            SendInfoMsgF(playerid, "v:%d", selectionCarModel[playerid]);
+            SendInfoMsgF(playerid, "model ret: %d", Vehicle_ReturnModel(selectionCarModel[playerid]));
+            if (!IsPlayerInVehicle(playerid, Vehicle_ReturnModel(selectionCarModel[playerid])))
                 return SendErrorMsg(playerid, "Niste u odabranom vozilu!");
 
             selectionCarDoors[playerid][listitem - 1] = !selectionCarDoors[playerid][listitem - 1];
@@ -362,7 +356,7 @@ Dialog: DIALOG_CONTROLCAR(const playerid, response, listitem, string: inputtext[
 
         case 5..8:
         {
-            if (GetVehicleModel(GetPlayerVehicleID(playerid)) != selectionCarModel[playerid])
+            if (!IsPlayerInVehicle(playerid, selectionCarModel[playerid]))
                 return SendErrorMsg(playerid, "Niste u odabranom vozilu!");
 
             selectionCarWindows[playerid][listitem - 5] = !selectionCarWindows[playerid][listitem - 5];
@@ -372,9 +366,9 @@ Dialog: DIALOG_CONTROLCAR(const playerid, response, listitem, string: inputtext[
 
         case 9:
         {
-            if (GetVehicleModel(GetPlayerVehicleID(playerid)) != selectionCarModel[playerid])
+            if (!IsPlayerInVehicle(playerid, selectionCarModel[playerid]))
                 return SendErrorMsg(playerid, "Niste u odabranom vozilu!");
-
+            
             if (Vehicle_GetBootStatus(selectionCarModel[playerid]))
                 return SendErrorMsg(playerid, "Prvo morate zatvoriti gepek!");
 
@@ -385,7 +379,7 @@ Dialog: DIALOG_CONTROLCAR(const playerid, response, listitem, string: inputtext[
 
         case 10:
         {
-            if (GetVehicleModel(GetPlayerVehicleID(playerid)) != selectionCarModel[playerid])
+            if (!IsPlayerInVehicle(playerid, selectionCarModel[playerid]))
                 return SendErrorMsg(playerid, "Niste u odabranom vozilu!");
 
             if (Vehicle_GetBonnetStatus(selectionCarModel[playerid]))
@@ -409,7 +403,7 @@ Dialog: DIALOG_HOUSEMENU(const playerid, response, listitem, string: inputtext[]
         case 0:
         {
             Dialog_Show(playerid, "DIALOG_HOUSEDESC", DIALOG_STYLE_INPUT,
-                ""MAIN_COLOR"gta-world - "WHITE"Opis kuce",
+                D_CAPTION,
                 "Unesite opis za vasu kucu:",
                 ""MAIN_COLOR"Potvrdi", "Nazad"
             );
@@ -427,7 +421,7 @@ Dialog: DIALOG_HOUSEMENU(const playerid, response, listitem, string: inputtext[]
         case 2:
         {
             Dialog_Show(playerid, "DIALOG_HOUSESELL", DIALOG_STYLE_INPUT,
-                ""MAIN_COLOR"gta-world - "WHITE"Prodaj kucu",
+                D_CAPTION,
                 "Unesite id igraca kome zelite prodati i cenu za koliko zelite prodati kucu:",
                 ""MAIN_COLOR"Unesi", "Nazad"
             );
@@ -498,8 +492,5 @@ Dialog: DIALOG_HOUSESELL(const playerid, response, listitem, string: inputtext[]
     SendInfoMsgF(playerid, "Prodali ste kucu igracu %s za "GREEN"$"WHITE"%d!", ReturnPlayerName(targetid), price);
     SendInfoMsgF(targetid, "%s Vam je prodao kucu za "GREEN"$"WHITE"%d!", ReturnPlayerName(playerid), price);
     House_Buy(targetid, houseid);
-
-    new String: str_query_update = str_format("UPDATE houses SET house_owner = '%e' WHERE house_id = '%d'", ReturnPlayerName(targetid), houseid);
-    mysql_tquery_s(MySQL_GetHandle(), str_query_update);
     return 1;
 }
