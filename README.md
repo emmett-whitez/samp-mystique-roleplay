@@ -7,7 +7,7 @@ Simply install to your project:
 
 ```bash
 git clone github.com/emmmett-white/samp-mystique-roleplay
-cd gta-world
+cd samp-mystique-roleplay
 sampctl ensure
 sampctl build
 sampctl run
