@@ -6,7 +6,7 @@
 #include <YSI_Coding\y_hooks>
 
 static
-    PlayerText:uiTextDrawIG[MAX_PLAYERS][25] = {PlayerText: INVALID_PLAYER_TEXT_DRAW,...},
+    PlayerText:uiTextDrawIG[MAX_PLAYERS][39] = {PlayerText: INVALID_PLAYER_TEXT_DRAW,...},
     PlayerText:uiLoadingTextDraw[MAX_PLAYERS] = {PlayerText: INVALID_PLAYER_TEXT_DRAW,...},
     PlayerText:uiLoginTextDraw[MAX_PLAYERS][24] = {PlayerText: INVALID_PLAYER_TEXT_DRAW,...},
     PlayerText:uiInfoTextDraw[MAX_PLAYERS] = {PlayerText: INVALID_PLAYER_TEXT_DRAW,...},
@@ -170,29 +170,26 @@ stock UI_SetPlayerIGTD(const playerid)
     new const bool: status = !UI_GetPlayerIGTD(playerid);
     if (!status)
     {
-        for (new i = 0; i <= 11; i++)
+        for (new i = 0; i <= 20; i++)
         {
-            PlayerTextDrawDestroy(playerid, uiTextDrawIG[playerid][24]);
             PlayerTextDrawDestroy(playerid, uiTextDrawIG[playerid][i]);
-            uiTextDrawIG[playerid][24] = PlayerText: INVALID_PLAYER_TEXT_DRAW;
             uiTextDrawIG[playerid][i] = PlayerText: INVALID_PLAYER_TEXT_DRAW;
         }
         return 1;
     }
 
-    uiTextDrawIG[playerid][0] = CreatePlayerTextDraw(playerid, 589.501953, 5.750017, "gta~w~world");
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][0], 0.348000, 1.413333);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][0], 0.000000, 190.000000);
+    uiTextDrawIG[playerid][0] = CreatePlayerTextDraw(playerid, 590.900512, 4.722169, "00:00~n~01/01/2024");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][0], 0.290499, 1.139554);
     PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][0], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][0], -229098497);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][0], -1);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][0], 0);
-    PlayerTextDrawSetOutline(playerid, uiTextDrawIG[playerid][0], 1);
+    PlayerTextDrawSetOutline(playerid, uiTextDrawIG[playerid][0], -1);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][0], 255);
     PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][0], 3);
     PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][0], 1);
 
-    uiTextDrawIG[playerid][1] = CreatePlayerTextDraw(playerid, 133.399230, 349.115936, "LD_SPAC:white");
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][1], 103.000000, 72.979995);
+    uiTextDrawIG[playerid][1] = CreatePlayerTextDraw(playerid, 494.599975, 106.877807, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][1], 117.000000, 67.000000);
     PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][1], 1);
     PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][1], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][1], 0);
@@ -200,8 +197,8 @@ stock UI_SetPlayerIGTD(const playerid)
     PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][1], 4);
     PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][1], 0);
 
-    uiTextDrawIG[playerid][2] = CreatePlayerTextDraw(playerid, 133.399230, 349.115936, "LD_SPAC:white");
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][2], 103.000000, 72.979995);
+    uiTextDrawIG[playerid][2] = CreatePlayerTextDraw(playerid, 494.599975, 106.877807, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][2], 117.000000, 67.000000);
     PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][2], 1);
     PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][2], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][2], 0);
@@ -209,109 +206,163 @@ stock UI_SetPlayerIGTD(const playerid)
     PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][2], 4);
     PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][2], 0);
 
-    uiTextDrawIG[playerid][3] = CreatePlayerTextDraw(playerid, 183.899932, 350.349853, "stats");
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][3], 0.252999, 0.800833);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][3], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][3], -229098497);
+    uiTextDrawIG[playerid][3] = CreatePlayerTextDraw(playerid, 496.599884, 108.955543, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][3], 113.350074, 11.000000);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][3], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][3], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][3], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][3], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][3], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][3], 1);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][3], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][3], 0);
 
-    uiTextDrawIG[playerid][4] = CreatePlayerTextDraw(playerid, 124.500000, 360.333343, "");
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][4], 61.000000, 47.000000);
+    uiTextDrawIG[playerid][4] = CreatePlayerTextDraw(playerid, 496.599884, 121.555351, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][4], 113.350074, 11.000000);
     PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][4], 1);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][4], -1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][4], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][4], 0);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][4], 0x00000000);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][4], 5);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][4], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][4], 4);
     PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][4], 0);
-    PlayerTextDrawSetPreviewModel(playerid, uiTextDrawIG[playerid][4], Account_GetSkin(playerid));
-    PlayerTextDrawSetPreviewRot(playerid, uiTextDrawIG[playerid][4], 0.000000, 0.000000, 0.000000, 1.000000);
 
-    uiTextDrawIG[playerid][5] = va_CreatePlayerTextDraw(playerid, 208.000000, 362.083251, "%d_LEVEL", Account_GetScore(playerid));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][5], 0.245000, 0.876666);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][5], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][5], -1);
+    uiTextDrawIG[playerid][5] = CreatePlayerTextDraw(playerid, 496.599884, 134.855667, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][5], 113.350074, 11.000000);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][5], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][5], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][5], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][5], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][5], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][5], 1);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][5], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][5], 0);
 
-    uiTextDrawIG[playerid][6] = va_CreatePlayerTextDraw(playerid, 208.000000, 371.383819, "~g~$~w~%d", Account_GetBankMoney(playerid));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][6], 0.245000, 0.876666);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][6], 0.000000, 144.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][6], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][6], -1);
+    uiTextDrawIG[playerid][6] = CreatePlayerTextDraw(playerid, 496.599884, 147.756454, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][6], 113.350074, 11.000000);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][6], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][6], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][6], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][6], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][6], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][6], 1);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][6], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][6], 0);
 
-    uiTextDrawIG[playerid][7] = va_CreatePlayerTextDraw(playerid, 208.000000, 380.584381, "%d~y~g", Account_GetGold(playerid));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][7], 0.245000, 0.876666);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][7], 0.000000, 144.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][7], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][7], -1);
+    uiTextDrawIG[playerid][7] = CreatePlayerTextDraw(playerid, 496.599884, 160.557235, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][7], 113.350074, 11.000000);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][7], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][7], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][7], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][7], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][7], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][7], 1);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][7], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][7], 0);
 
-    uiTextDrawIG[playerid][8] = CreatePlayerTextDraw(playerid, 136.299621, 411.984375, ReturnPlayerName(playerid));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][8], 0.245000, 0.876666);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][8], 144.000000, 0.000000);
+    uiTextDrawIG[playerid][8] = CreatePlayerTextDraw(playerid, 499.200042, 111.477745, "BANKA");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][8], 0.184498, 0.654222);
     PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][8], 1);
     PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][8], -1);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][8], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][8], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][8], 3);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][8], 2);
     PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][8], 1);
 
-    uiTextDrawIG[playerid][9] = va_CreatePlayerTextDraw(playerid, 207.899719, 390.501007, "0/~r~%d~w~exp", Account_GetExp(playerid));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][9], 0.245000, 0.876666);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][9], 0.000000, 103.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][9], 2);
+    uiTextDrawIG[playerid][9] = CreatePlayerTextDraw(playerid, 499.200042, 124.277549, "ZLATO");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][9], 0.184498, 0.654222);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][9], 1);
     PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][9], -1);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][9], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][9], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][9], 3);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][9], 2);
     PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][9], 1);
 
-    uiTextDrawIG[playerid][10] = CreatePlayerTextDraw(playerid, 23.000000, 435.266540, "Trenutno igrate na Mystique samp serveru, verzija moda: 1.0");
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][10], 0.256000, 1.005000);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][10], 476.000000, 0.000000);
+    uiTextDrawIG[playerid][10] = CreatePlayerTextDraw(playerid, 499.200042, 137.378067, "LEVEL");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][10], 0.184498, 0.654222);
     PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][10], 1);
     PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][10], -1);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][10], 0);
-    PlayerTextDrawSetOutline(playerid, uiTextDrawIG[playerid][10], 1);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][10], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][10], 3);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][10], 2);
     PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][10], 1);
 
-    uiTextDrawIG[playerid][11] = CreatePlayerTextDraw(playerid, 7.900000, 435.566680, "LD_CHAT:BADCHAT");
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][11], 9.400009, 9.490011);
+    uiTextDrawIG[playerid][11] = CreatePlayerTextDraw(playerid, 499.200042, 150.278854, "EXP");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][11], 0.184498, 0.654222);
     PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][11], 1);
     PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][11], -1);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][11], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][11], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][11], 4);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][11], 0);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][11], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][11], 1);
 
-    uiTextDrawIG[playerid][24] = CreatePlayerTextDraw(playerid, 604.100341, 434.716674, "dupli_respekti");
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][24], 0.244000, 1.022500);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][24], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][24], -229098497);
-    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][24], 0);
-    PlayerTextDrawSetOutline(playerid, uiTextDrawIG[playerid][24], 1);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][24], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][24], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][24], 1);
+    uiTextDrawIG[playerid][12] = CreatePlayerTextDraw(playerid, 499.200042, 163.179641, "Ime");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][12], 0.184498, 0.654222);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][12], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][12], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][12], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][12], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][12], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][12], 1);
+
+    uiTextDrawIG[playerid][13] = va_CreatePlayerTextDraw(playerid, 607.899780, 110.935157, "~g~$~w~%d", Account_GetBankMoney(playerid));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][13], 0.184498, 0.654222);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][13], 3);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][13], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][13], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][13], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][13], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][13], 1);
+
+    uiTextDrawIG[playerid][14] = va_CreatePlayerTextDraw(playerid, 607.899780, 123.834960, "%d~y~G", Account_GetGold(playerid));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][14], 0.184498, 0.654222);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][14], 3);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][14], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][14], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][14], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][14], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][14], 1);
+
+    uiTextDrawIG[playerid][15] = va_CreatePlayerTextDraw(playerid, 607.899780, 136.935440, "%d", Account_GetScore(playerid));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][15], 0.184498, 0.654222);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][15], 3);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][15], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][15], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][15], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][15], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][15], 1);
+
+    uiTextDrawIG[playerid][16] = va_CreatePlayerTextDraw(playerid, 607.899780, 149.936233, "%d/~r~%d", Account_GetExp(playerid), (Account_GetScore(playerid) * 2));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][16], 0.184498, 0.654222);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][16], 3);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][16], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][16], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][16], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][16], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][16], 1);
+
+    uiTextDrawIG[playerid][17] = va_CreatePlayerTextDraw(playerid, 607.899780, 163.437057, "~r~%s", ReturnPlayerName(playerid));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][17], 0.184498, 0.654222);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][17], 3);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][17], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][17], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][17], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][17], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][17], 1);
+
+    uiTextDrawIG[playerid][18] = CreatePlayerTextDraw(playerid, 5.000000, 435.622192, "LD_CHAT:THUMBUP");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][18], 8.000000, 8.000000);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][18], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][18], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][18], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][18], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][18], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][18], 0);
+
+    uiTextDrawIG[playerid][19] = CreatePlayerTextDraw(playerid, 17.100002, 435.877838, "DUPLI_RESPEKTI");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][19], 0.165999, 0.778666);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][19], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][19], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][19], 0);
+    PlayerTextDrawSetOutline(playerid, uiTextDrawIG[playerid][19], 1);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][19], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][19], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][19], 1);
 
     // showing 11 textdraws (no speedometer)
-    for (new i = 0; i <= 11; i++)
+    for (new i = 0; i <= 19; i++)
         PlayerTextDrawShow(playerid, uiTextDrawIG[playerid][i]);
-    PlayerTextDrawShow(playerid, uiTextDrawIG[playerid][24]);
     return 1;
 }
 
@@ -568,17 +619,15 @@ stock UI_CreateLoginTextDraw(const playerid)
 
 stock UI_UpdateInfoTD(const playerid)
 {
-    PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][8], ReturnPlayerName(playerid));
+    va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][17], "~r~%s", ReturnPlayerName(playerid));
     
     if (!Account_GetBankCard(playerid))
-        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][6], "~r~Nemate racun"); 
-    else va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][6], "~g~$~w~%d", Account_GetBankMoney(playerid));
+        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][13], "~r~Nemate racun"); 
+    else va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][13], "~g~$~w~%d", Account_GetBankMoney(playerid));
     
-    va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][7], "~w~%d~y~G", Account_GetGold(playerid));
-    va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][5], "%d_level", GetPlayerScore(playerid));
-    va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][9], "%d/~r~%d~w~exp", Account_GetExp(playerid), (Account_GetScore(playerid) * 2));
-    PlayerTextDrawSetPreviewModel(playerid, uiTextDrawIG[playerid][4], Account_GetSkin(playerid));
-    PlayerTextDrawShow(playerid, uiTextDrawIG[playerid][4]);
+    va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][14], "%d~y~G", Account_GetGold(playerid));
+    va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][15], "%d", GetPlayerScore(playerid));
+    va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][16], "%d/~r~%d", Account_GetExp(playerid), (Account_GetScore(playerid) * 2));
     return 1;
 }
 
@@ -586,7 +635,7 @@ stock UI_SetSpeedometer(const playerid, bool:status)
 {
     if (!status)
     {
-        for (new i = 12; i <= 23; i++)
+        for (new i = 20; i <= 37; i++)
         {
             PlayerTextDrawDestroy(playerid, uiTextDrawIG[playerid][i]);
             uiTextDrawIG[playerid][i] = PlayerText: INVALID_PLAYER_TEXT_DRAW;
@@ -595,131 +644,172 @@ stock UI_SetSpeedometer(const playerid, bool:status)
     }
 
     // speedometer
-    uiTextDrawIG[playerid][12] = CreatePlayerTextDraw(playerid, 521.797973, 349.349121, "LD_SPAC:white");
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][12], 103.000000, 72.979995);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][12], 1);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][12], 153);
-    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][12], 0);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][12], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][12], 4);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][12], 0);
-
-    uiTextDrawIG[playerid][13] = CreatePlayerTextDraw(playerid, 521.797973, 349.349121, "LD_SPAC:white");
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][13], 103.000000, 72.979995);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][13], 1);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][13], 153);
-    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][13], 0);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][13], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][13], 4);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][13], 0);
-
-    uiTextDrawIG[playerid][14] = CreatePlayerTextDraw(playerid, 572.799804, 351.216491, "speedometer");
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][14], 0.252999, 0.800833);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][14], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][14], -229098497);
-    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][14], 0);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][14], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][14], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][14], 1);
-
-    uiTextDrawIG[playerid][15] = CreatePlayerTextDraw(playerid, 514.300537, 353.966796, "");
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][15], 59.000000, 57.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][15], 1);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][15], -1);
-    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][15], 0);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][15], 0x00000000);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][15], 5);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][15], 0);
-    PlayerTextDrawSetPreviewModel(playerid, uiTextDrawIG[playerid][15], GetVehicleModel(GetPlayerVehicleID(playerid)));
-    PlayerTextDrawSetPreviewRot(playerid, uiTextDrawIG[playerid][15], -20.000000, 0.000000, 25.000000, 1.000000);
-    PlayerTextDrawSetPreviewVehCol(playerid, uiTextDrawIG[playerid][15], 1, 1);
-
-    uiTextDrawIG[playerid][16] = CreatePlayerTextDraw(playerid, 524.500000, 411.866668, GetVehicleName(GetPlayerVehicleID(playerid)));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][16], 0.214999, 0.865000);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][16], 632.000000, 0.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][16], 1);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][16], -1);
-    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][16], 0);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][16], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][16], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][16], 1);
-
-    uiTextDrawIG[playerid][17] = va_CreatePlayerTextDraw(playerid, 595.199707, 364.799957, "%s", (Vehicle_GetLights(playerid) == 1 ? "~g~svetla" : "~r~svetla"));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][17], 0.214999, 0.865000);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][17], 0.000000, 632.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][17], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][17], -1);
-    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][17], 0);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][17], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][17], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][17], 1);
-
-    uiTextDrawIG[playerid][18] = va_CreatePlayerTextDraw(playerid, 595.199707, 373.900512, "%s", (Vehicle_GetEngine(playerid) == 1 ? "~g~motor" : "~r~motor"));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][18], 0.214999, 0.865000);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][18], 0.000000, 632.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][18], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][18], -1);
-    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][18], 0);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][18], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][18], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][18], 1);
-
-    uiTextDrawIG[playerid][19] = va_CreatePlayerTextDraw(playerid, 595.199707, 383.201080, "%s", (Player_GetSeatbelt(playerid) == 1 ? "~g~pojas" : "~r~pojas"));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][19], 0.214999, 0.865000);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][19], 0.000000, 632.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][19], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][19], -1);
-    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][19], 0);
-    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][19], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][19], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][19], 1);
-
-    uiTextDrawIG[playerid][20] = va_CreatePlayerTextDraw(playerid, 595.199707, 392.201629, "%dL", Vehicle_GetFuel(playerid));
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][20], 0.214999, 0.865000);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][20], 0.000000, 632.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][20], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][20], -1);
+    uiTextDrawIG[playerid][20] = CreatePlayerTextDraw(playerid, 493.799987, 350.377868, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][20], 139.000000, 89.000000);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][20], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][20], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][20], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][20], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][20], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][20], 1);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][20], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][20], 0);
 
-    uiTextDrawIG[playerid][21] = CreatePlayerTextDraw(playerid, 595.199707, 401.802215, "---");
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][21], 0.214999, 0.865000);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][21], 0.000000, 632.000000);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][21], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][21], -1);
+    uiTextDrawIG[playerid][21] = CreatePlayerTextDraw(playerid, 493.799987, 350.377868, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][21], 139.000000, 89.000000);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][21], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][21], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][21], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][21], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][21], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][21], 1);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][21], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][21], 0);
 
-    uiTextDrawIG[playerid][22] = CreatePlayerTextDraw(playerid, 618.299804, 412.533416, "___");
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][22], 0.167999, 0.713333);
-    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][22], 2);
-    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][22], -16776961);
+    uiTextDrawIG[playerid][22] = CreatePlayerTextDraw(playerid, 495.400085, 352.778015, "LD_SPAC:white");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][22], 135.740142, 11.000000);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][22], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][22], 153);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][22], 0);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][22], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][22], 3);
-    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][22], 1);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][22], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][22], 0);
 
-    uiTextDrawIG[playerid][23] = CreatePlayerTextDraw(playerid, 572.899291, 340.516723, "svelta-~y~n__~w~motor-~y~2__~w~/pojas");
-    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][23], 0.173999, 0.795000);
-    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][23], 0.000000, 117.000000);
+    uiTextDrawIG[playerid][23] = va_CreatePlayerTextDraw(playerid, 562.499511, 354.144470, "~b~%s", GetVehicleName(GetPlayerVehicleID(playerid)));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][23], 0.153500, 0.784888);
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][23], 0.000000, 136.000000);
     PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][23], 2);
     PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][23], -1);
     PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][23], 0);
-    PlayerTextDrawSetOutline(playerid, uiTextDrawIG[playerid][23], 1);
     PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][23], 255);
-    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][23], 3);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][23], 2);
     PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][23], 1);
 
-    for (new i = 12; i <= 23; i++)
-    {
-        PlayerTextDrawSetPreviewModel(playerid, uiTextDrawIG[playerid][15], GetVehicleModel(GetPlayerVehicleID(playerid)));
-        PlayerTextDrawSetPreviewVehCol(playerid, uiTextDrawIG[playerid][15], Vehicle_GetColor(GetPlayerVehicleID(playerid), 0), Vehicle_GetColor(GetPlayerVehicleID(playerid), 1));
+    uiTextDrawIG[playerid][24] = CreatePlayerTextDraw(playerid, 498.400115, 424.778045, "299KM/H");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][24], 0.165000, 0.915555);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][24], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][24], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][24], 1);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][24], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][24], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][24], 1);
+
+    uiTextDrawIG[playerid][25] = CreatePlayerTextDraw(playerid, 609.194641, 423.288879, "___"); // handbrake
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][25], 0.222999, 1.108443);
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][25], 660.000000, 0.000000);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][25], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][25], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][25], 1);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][25], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][25], 1);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][25], 1);
+
+    uiTextDrawIG[playerid][26] = CreatePlayerTextDraw(playerid, 495.500000, 365.466766, "LD_SPAC:WHITE");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][26], 136.000000, 12.140026);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][26], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][26], 153);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][26], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][26], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][26], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][26], 0);
+
+    uiTextDrawIG[playerid][27] = CreatePlayerTextDraw(playerid, 495.500000, 379.167602, "LD_SPAC:WHITE");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][27], 136.000000, 12.140026);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][27], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][27], 153);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][27], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][27], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][27], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][27], 0);
+
+    uiTextDrawIG[playerid][28] = CreatePlayerTextDraw(playerid, 495.500000, 392.868438, "LD_SPAC:WHITE");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][28], 136.000000, 12.140026);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][28], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][28], 153);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][28], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][28], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][28], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][28], 0);
+
+    uiTextDrawIG[playerid][29] = CreatePlayerTextDraw(playerid, 495.500000, 406.469268, "LD_SPAC:WHITE");
+    PlayerTextDrawTextSize(playerid, uiTextDrawIG[playerid][29], 136.000000, 12.140026);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][29], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][29], 153);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][29], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][29], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][29], 4);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][29], 0);
+
+    uiTextDrawIG[playerid][30] = CreatePlayerTextDraw(playerid, 498.000000, 367.855590, "MOTOR");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][30], 0.160999, 0.728887);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][30], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][30], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][30], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][30], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][30], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][30], 1);
+
+    uiTextDrawIG[playerid][31] = CreatePlayerTextDraw(playerid, 498.000000, 381.456420, "GORIVO");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][31], 0.160999, 0.728887);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][31], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][31], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][31], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][31], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][31], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][31], 1);
+
+    uiTextDrawIG[playerid][32] = CreatePlayerTextDraw(playerid, 498.000000, 394.957244, "SVETLA");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][32], 0.160999, 0.728887);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][32], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][32], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][32], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][32], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][32], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][32], 1);
+
+    uiTextDrawIG[playerid][33] = CreatePlayerTextDraw(playerid, 498.000000, 408.958099, "POJAS");
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][33], 0.160999, 0.728887);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][33], 1);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][33], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][33], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][33], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][33], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][33], 1);
+
+    uiTextDrawIG[playerid][34] = va_CreatePlayerTextDraw(playerid, 628.000000, 367.269165, "%s", (Vehicle_GetEngine(playerid) == 1 ? "~g~UPALJEN" : "~r~UGASEN"));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][34], 0.160999, 0.728887);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][34], 3);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][34], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][34], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][34], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][34], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][34], 1);
+
+    uiTextDrawIG[playerid][35] = va_CreatePlayerTextDraw(playerid, 628.699829, 381.170013, "~y~%dL", Vehicle_GetFuel(playerid));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][35], 0.160999, 0.728887);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][35], 3);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][35], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][35], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][35], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][35], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][35], 1);
+
+    uiTextDrawIG[playerid][36] = va_CreatePlayerTextDraw(playerid, 628.699829, 394.670837, "%s", (Vehicle_GetLights(playerid) == 1 ? "~g~UPALJENA" : "~r~UGASENA"));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][36], 0.160999, 0.728887);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][36], 3);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][36], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][36], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][36], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][36], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][36], 1);
+
+    uiTextDrawIG[playerid][37] = va_CreatePlayerTextDraw(playerid, 628.699829, 408.671691, "%s", (Player_GetSeatbelt(playerid) == 1 ? "~g~VEZAN" : "~r~ODVEZAN"));
+    PlayerTextDrawLetterSize(playerid, uiTextDrawIG[playerid][37], 0.160999, 0.728887);
+    PlayerTextDrawAlignment(playerid, uiTextDrawIG[playerid][37], 3);
+    PlayerTextDrawColor(playerid, uiTextDrawIG[playerid][37], -1);
+    PlayerTextDrawSetShadow(playerid, uiTextDrawIG[playerid][37], 0);
+    PlayerTextDrawBackgroundColor(playerid, uiTextDrawIG[playerid][37], 255);
+    PlayerTextDrawFont(playerid, uiTextDrawIG[playerid][37], 2);
+    PlayerTextDrawSetProportional(playerid, uiTextDrawIG[playerid][37], 1);
+
+    for (new i = 20; i <= 37; i++)
         PlayerTextDrawShow(playerid, uiTextDrawIG[playerid][i]);
-    }
     return 1;
 }
 
@@ -807,13 +897,13 @@ stock Vehicle_SetEngine(const playerid)
     if (!status)
     {
         SetVehicleParamsEx(GetPlayerVehicleID(playerid), 0, lights, alarm, doors, bonnet, boot, objective);
-        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][18], "~r~motor");
+        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][34], "~r~UGASEN");
         vehicleEngine[playerid] = 0;
         return 1;
     }
 
     SetVehicleParamsEx(GetPlayerVehicleID(playerid), 1, lights, alarm, doors, bonnet, boot, objective);
-    PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][18], "~g~motor");
+    PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][34], "~g~UPALJEN");
     vehicleEngine[playerid] = 1;
     return 1;
 }
@@ -827,13 +917,13 @@ stock Vehicle_SetLights(const playerid)
     if (!status)
     {
         SetVehicleParamsEx(GetPlayerVehicleID(playerid), engine, 0, alarm, doors, bonnet, boot, objective);
-        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][17], "~r~svetla");
+        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][36], "~r~UGASENA");
         vehicleLights[playerid] = 0;
         return 1;
     }
 
     SetVehicleParamsEx(GetPlayerVehicleID(playerid), engine, 1, alarm, doors, bonnet, boot, objective);
-    PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][17], "~g~svetla");
+    PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][36], "~g~UPALJENA");
     vehicleLights[playerid] = 1;
     return 1;
 }
@@ -844,13 +934,13 @@ stock Vehicle_SetSeatbelt(const playerid)
     if (!status)
     {
         Player_SetSeatbelt(playerid, false);
-        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][19], "~r~pojas");
+        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][37], "~r~ODVEZAN");
         SendServerMsg(playerid, "Odvezali ste pojas.");
         return 1;
     }
 
     Player_SetSeatbelt(playerid, true);
-    PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][19], "~g~pojas");
+    PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][37], "~g~VEZAN");
     SendServerMsg(playerid, "Zavezali ste pojas.");
     return 1;
 }
@@ -915,14 +1005,14 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
     if (IsPlayerInAnyVehicle(playerid) && PRESSED(KEY_AIM))
     {
-        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][22], "~r~(P)");
-        PlayerTextDrawShow(playerid, uiTextDrawIG[playerid][22]);
+        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][25], "~r~( P )");
+        PlayerTextDrawShow(playerid, uiTextDrawIG[playerid][25]);
     }
 
     else if (IsPlayerInAnyVehicle(playerid) && RELEASED(KEY_AIM))
     {
-        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][22], "___");
-        PlayerTextDrawShow(playerid, uiTextDrawIG[playerid][22]);
+        PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][25], "___");
+        PlayerTextDrawShow(playerid, uiTextDrawIG[playerid][25]);
     }
 
     else if (IsPlayerInAnyVehicle(playerid) && PRESSED(KEY_SUBMISSION) && Vehicle_GetFuel(playerid))
@@ -935,7 +1025,7 @@ hook OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 PTASK__ Speedo_UpdateVehStatus[400](playerid)
 {
     if (IsPlayerInAnyVehicle(playerid))
-        va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][21], "%dkm/h", GetVehicleSpeed(GetPlayerVehicleID(playerid)));
+        va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][24], "%dkm/h", GetVehicleSpeed(GetPlayerVehicleID(playerid)));
 }
 
 PTASK__ Speedo_UpdateFuel[120000](playerid)
@@ -949,17 +1039,25 @@ PTASK__ Speedo_UpdateFuel[120000](playerid)
         if (!Vehicle_GetFuel(playerid) && Vehicle_GetEngine(playerid))
             Vehicle_SetEngine(playerid);
 
-        va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][20], "%dL", Vehicle_GetFuel(playerid));
+        va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][35], "~y~%dL", Vehicle_GetFuel(playerid));
     }
     return 1;
 }
 
-PTASK__ UI_UpdateRandomMsg[5000](playerid)
+// PTASK__ UI_UpdateRandomMsg[5000](playerid)
+// {
+//     PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][10], randomMessages[random(sizeof(randomMessages))]);
+// }
+
+static __hour, __min, __sec, __day, __month, __year;
+PTASK__ UI_UpdateTimeDate[1000](playerid)
 {
-    PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][10], randomMessages[random(sizeof(randomMessages))]);
+    gettime(__hour, __min, __sec);
+    getdate(__year, __month, __day);
+    va_PlayerTextDrawSetString(playerid, uiTextDrawIG[playerid][0], "%02d:%02d:%02d~n~%02d/%02d/%d", __hour, __min, __sec, __day, __month, __year);
 }
 
-PTASK__ UI_SendRandomMsg[30000](playerid)
+PTASK__ UI_SendRandomMsg[60000](playerid)
 {
     SendCustomMsgF(playerid, MAIN_COLOR_HEX, "[HELP]: "GRAY"%s", randomMessages[random(sizeof(randomMessages))]);
 }

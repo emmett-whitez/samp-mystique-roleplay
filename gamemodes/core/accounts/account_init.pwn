@@ -237,10 +237,10 @@ hook OnPlayerDisconnect(playerid, reason)
 hook OnPlayerRequestClass(playerid, classic)
 {
     if (Account_GetSpawn(playerid) == 1)
-        SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1583.8350, -2338.2874, 13.5890, 54.4807, 0, 0, 0, 0, 0, 0);
+        SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1481.2960,-2287.3005,13.5624,87.3167, 0, 0, 0, 0, 0, 0);
     else if (Account_GetSpawn(playerid) == 2)
     {
-        SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1583.8350, -2338.2874, 13.5890, 54.4807, 0, 0, 0, 0, 0, 0);
+        SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1481.2960,-2287.3005,13.5624,87.3167, 0, 0, 0, 0, 0, 0);
         // new houseid = Account_GetHouse(playerid);
         // SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), House_GetIntPos(houseid, 0), House_GetIntPos(houseid, 1), House_GetIntPos(houseid, 2), 0.0, 0, 0, 0, 0, 0, 0);
     }
@@ -341,7 +341,7 @@ stock Account_SetSpawn(const playerid, const spawnid)
         {
             SetPlayerVirtualWorld(playerid, 0);
             SetPlayerInterior(playerid, 0);
-            SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1583.8350, -2338.2874, 13.5890, 54.4807, 0, 0, 0, 0, 0, 0);
+            SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1481.2960,-2287.3005,13.5624,87.3167, 0, 0, 0, 0, 0, 0);
             SpawnPlayer(playerid);
             
             for (new i = 0; i < 30; i++)
@@ -362,7 +362,7 @@ stock Account_SetSpawn(const playerid, const spawnid)
             // SpawnPlayer(playerid);
             SetPlayerVirtualWorld(playerid, 0);
             SetPlayerInterior(playerid, 0);
-            SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1583.8350, -2338.2874, 13.5890, 54.4807, 0, 0, 0, 0, 0, 0);
+            SetSpawnInfo(playerid, 0, Account_GetSkin(playerid), 1481.2960,-2287.3005,13.5624,87.3167, 0, 0, 0, 0, 0, 0);
             SpawnPlayer(playerid);
             
             for (new i = 0; i < 30; i++)

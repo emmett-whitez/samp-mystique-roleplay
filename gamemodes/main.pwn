@@ -2,7 +2,9 @@
 	@ GAMEMODE NAME: 	MystiqueRP
 	@ AUTHOR: 			Emmett (Dejan Jovanovic)
 	@ SINCE:			2023
-	@ TO-DO: 	 		//
+	@ TO-DO:
+						* Napraviti prodaju vozila igracu i drzavi
+						* Zavrsiti sistem imovine
 */
 
 #define AMX_OLD_CALL
@@ -89,7 +91,6 @@
 #include "/core/systems/mobile/mobile_init.pwn"
 #include "/core/systems/port/port_init.pwn"
 #include "/core/systems/events/event_dm.pwn"
-#include "/core/systems/events/event_init.pwn"
 #include "/core/systems/atms/atm_init.pwn"
 #include "/core/systems/backpack/backpack_init.pwn"
 

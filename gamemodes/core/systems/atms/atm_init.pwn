@@ -716,13 +716,21 @@ stock Atm_DestroyUI(const playerid)
 	return 1;
 }
 
+forward Atm_FreeRobTimer(const atmid);
+public Atm_FreeRobTimer(const atmid)
+{
+	AtmData[atmid][atmRobbed] = 0;
+	return 1;
+}
+
 forward Atm_RobProcess(const playerid, const atmid);
 public Atm_RobProcess(const playerid, const atmid)
 {
-	atmRobSeconds[playerid]++;
+	// postaviti rob da bude 120 sekundi / 2 minuta
+	atmRobSeconds[playerid]--;
 	va_GameTextForPlayer(playerid, "~Y~JOS ~r~%d ~y~SEKUNDI!", 1000, 3, atmRobSeconds[playerid]);
 
-	if (atmRobSeconds[playerid] == 10) // 120
+	if (!atmRobSeconds[playerid])
 	{
 		new atmMoney = random(600000) + 200000;
 		SendClientMessage(playerid, X11_GREEN, "=========================================================");
@@ -733,6 +741,7 @@ public Atm_RobProcess(const playerid, const atmid)
 
 		AtmData[atmid][atmRobbed] = 1;
 		KillTimer(atmRobTimer[playerid]);
+		SetTimerEx("Atm_FreeRobTimer", 300000, false, "i", atmid);
 	}
 	return 1;
 }
@@ -740,9 +749,10 @@ public Atm_RobProcess(const playerid, const atmid)
 stock Atm_StartRob(const playerid, const atmid)
 {
 	// #pragma unused playerid, atmid
-	atmRobSeconds[playerid] = 0;
+	atmRobSeconds[playerid] = 10;
 	SendClientMessage(playerid, X11_RED, "[BANKOMAT]: "WHITE"Zapoceli ste "RED"pljacku "WHITE"bankomata!");
-	// atmRobTimer[playerid] = SetTimerEx("Atm_RobFinished", 120000, false, "di", playerid, atmid);
+	TogglePlayerControllable(playerid, 0);
+	Anim_SetPlayerAnimation(playerid, "bomb");
 	atmRobTimer[playerid] = SetTimerEx("Atm_RobProcess", 1000, true, "di", playerid, atmid);
 	return 1;
 }

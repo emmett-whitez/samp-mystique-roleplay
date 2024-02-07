@@ -911,7 +911,7 @@ stock Vehicle_UpdateCarStatus(const playerid)
     strcopy(tmpString[9], Vehicle_GetBootStatus(vehicleSelectedCMD[playerid]) == 1 ? ""LIGHTGREEN"Otvoren" : ""DARKRED"Zatvoren");
 
     Dialog_Show(playerid, "DIALOG_CONTROLCAR", DIALOG_STYLE_TABLIST_HEADERS,
-        ""MAIN_COLOR"gta-world - "WHITE"VOZILO",
+        D_CAPTION,
         ""WHITE"Opcija\t"WHITE"Status\n\
         Lociraj vozilo\t-\n\
         Leva prednja vrata\t%s\n\
@@ -1017,11 +1017,11 @@ Dialog: DIALOG_VEHCONFIRMBUY(const playerid, response, listitem, string: inputte
     va_GameTextForPlayer(playerid, "~r~-$%d", 3000, 3, vehicleCarList[vehicleCatalogueID[playerid]][2][0]);
     Vehicle_CreateCOSUI(playerid, false);
 
-    printf("===============\n\
-        1:%d\n2:%d\n\
-        ================",
-        Account_GetCar(playerid, 1), Account_GetCar(playerid, 2)
-    );
+    // printf("===============\n\
+    //     1:%d\n2:%d\n\
+    //     ================",
+    //     Account_GetCar(playerid, 1), Account_GetCar(playerid, 2)
+    // );
     Account_SavePlayer(playerid);
     return 1;
 }
@@ -1036,8 +1036,8 @@ Dialog: DIALOG_CONTROLCAR(const playerid, response, listitem, string: inputtext[
         case 1..4:
         {
             // if (Vehicle_ReturnModel(GetPlayerVehicleID(playerid)) != vehicleSelectedCMD[playerid])
-            SendInfoMsgF(playerid, "v:%d", vehicleSelectedCMD[playerid]);
-            SendInfoMsgF(playerid, "model ret: %d", VehicleData[1][vehicleModel]);
+            // SendInfoMsgF(playerid, "v:%d", vehicleSelectedCMD[playerid]);
+            // SendInfoMsgF(playerid, "model ret: %d", VehicleData[1][vehicleModel]);
             if (!IsPlayerInVehicle(playerid, VehicleData[vehicleSelectedCMD[playerid]][vehicleModel]))
                 return SendErrorMsg(playerid, "Niste u odabranom vozilu!");
 
@@ -1058,7 +1058,7 @@ Dialog: DIALOG_CONTROLCAR(const playerid, response, listitem, string: inputtext[
 
         case 9:
         {
-            if (!IsPlayerInVehicle(playerid, vehicleSelectedCMD[playerid]))
+            if (!IsPlayerInVehicle(playerid, VehicleData[vehicleSelectedCMD[playerid]][vehicleModel]))
                 return SendErrorMsg(playerid, "Niste u odabranom vozilu!");
             
             if (Vehicle_GetBootStatus(vehicleSelectedCMD[playerid]))
@@ -1071,7 +1071,7 @@ Dialog: DIALOG_CONTROLCAR(const playerid, response, listitem, string: inputtext[
 
         case 10:
         {
-            if (!IsPlayerInVehicle(playerid, vehicleSelectedCMD[playerid]))
+            if (!IsPlayerInVehicle(playerid, VehicleData[vehicleSelectedCMD[playerid]][vehicleModel]))
                 return SendErrorMsg(playerid, "Niste u odabranom vozilu!");
 
             if (Vehicle_GetBonnetStatus(vehicleSelectedCMD[playerid]))
